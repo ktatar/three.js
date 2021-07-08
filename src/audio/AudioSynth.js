@@ -65,16 +65,16 @@ class AudioSynth extends Object3D {
 
 	}
 
-	sine( freq , amp ) {
+	sine( frequency , amp ) {
 
 		const twoPi = Math.PI*2;
 		let t = 0;
 		let v = 0;
 
-		for(let i=0; i<this.shape.length; i++){
+		for(let i=0; i<this.bufferArray.length; i++){
 
-			t = i/this.shape.length;
-			v = amp * (Math.sin( freq * twoPi * t ));
+			t = i/this.bufferArray.length;
+			v = amp * (Math.sin( frequency * twoPi * t ));
 
 			this.shape[i] = Math.abs(v) <= 0.00013089969352576765 ? 0 : v; 
 
@@ -82,7 +82,7 @@ class AudioSynth extends Object3D {
 
 		return this;
 
-	},
+	}
 
 	add() {
 
@@ -90,12 +90,12 @@ class AudioSynth extends Object3D {
 			this.nowBuffering = this.buffer.getChannelData(this.channel);
 			for (let i=0; i<this.buffer.length; i++){
 				
-				this.nowBuffering[i] += this.shape[i];
+				this.nowBuffering[i] += this.bufferArray[i];
 			
 			}
 		}
 
-	},
+	}
 
 	setBuffer( audioBuffer ) {
 
