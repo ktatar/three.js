@@ -14,152 +14,11 @@ class AudioSynth extends Object3D {
 		this.gain = this.context.createGain();
 		this.gain.connect( listener.getInput() );
 
-        // INITIALIZE PARAMETERS
-		this.autoplay = false;
-
-		this.detune = 0;
-		this.duration = undefined;
-		this.isPlaying = false;
-
-		this.source = null;
-		this.sourceType = 'empty';
-
-		this._startedAt = 0;
-		this._progress = 0;
-		this._connected = false;
-
-        // USE THIS FOR FX?
-		this.filters = [];
-
 	}
 
 	getOutput() {
 
 		return this.gain;
-
-	}
-
-	setNodeSource( audioNode ) {
-
-		this.hasPlaybackControl = false;
-		this.sourceType = 'audioNode';
-		this.source = audioNode;
-		this.connect();
-
-		return this;
-
-	}
-
-	createBuffer( nChannels, duration, sRate ) {
-
-		this.nChannels = nChannels;
-		this.duration = duration;
-		this.sRate = sRate;
-
-		this.length = this.duration * this.sRate;
-
-		this.buffer = audioCtx.createBuffer( this.nChannels, this.length, this.sRate );
-		this.bufferArray = new Float32Array( this.length );
-
-		return this;
-
-	}
-
-	sine( frequency , amp ) {
-
-		const twoPi = Math.PI*2;
-		let t = 0;
-		let v = 0;
-
-		for(let i=0; i<this.bufferArray.length; i++){
-
-			t = i/this.bufferArray.length;
-			v = amp * (Math.sin( frequency * twoPi * t ));
-
-			this.shape[i] = Math.abs(v) <= 0.00013089969352576765 ? 0 : v; 
-
-		}
-
-		return this;
-
-	}
-
-	add() {
-
-		for (this.channel = 0; this.channel<this.buffer.numberOfChannels; this.channel++){
-			this.nowBuffering = this.buffer.getChannelData(this.channel);
-			for (let i=0; i<this.buffer.length; i++){
-				
-				this.nowBuffering[i] += this.bufferArray[i];
-			
-			}
-		}
-
-	}
-
-	setBuffer( audioBuffer ) {
-
-		this.buffer = audioBuffer;
-		this.sourceType = 'buffer';
-
-		if ( this.autoplay ) this.play();
-
-		return this;
-
-	}
-
-	play( delay = 0 ) {
-
-		if ( this.isPlaying === true ) {
-
-			console.warn( 'THREE.Audio: Audio is already playing.' );
-			return;
-
-		}
-
-		if ( this.hasPlaybackControl === false ) {
-
-			console.warn( 'THREE.Audio: this Audio has no playback control.' );
-			return;
-
-		}
-
-		this._startedAt = this.context.currentTime + delay;
-
-		const source = this.context.createBufferSource();
-		source.buffer = this.buffer;
-		source.loop = this.loop;
-		source.loopStart = this.loopStart;
-		source.loopEnd = this.loopEnd;
-		source.onended = this.onEnded.bind( this );
-		source.start( this._startedAt, this._progress + this.offset, this.duration );
-
-		this.isPlaying = true;
-
-		this.source = source;
-
-		this.setDetune( this.detune );
-
-		return this.connect();
-
-	}
-
-	stop() {
-
-		if ( this.hasPlaybackControl === false ) {
-
-			console.warn( 'THREE.Audio: this Audio has no playback control.' );
-			return;
-
-		}
-
-		this._progress = 0;
-
-		this.source.stop();
-		this.source.onended = null;
-		this.isPlaying = false;
-
-		return this;
 
 	}
 
@@ -241,28 +100,6 @@ class AudioSynth extends Object3D {
 		}
 
 		return this;
-
-	}
-
-	setDetune( value ) {
-
-		this.detune = value;
-
-		if ( this.source.detune === undefined ) return; // only set detune when available
-
-		if ( this.isPlaying === true ) {
-
-			this.source.detune.setTargetAtTime( this.detune, this.context.currentTime, 0.01 );
-
-		}
-
-		return this;
-
-	}
-
-	getDetune() {
-
-		return this.detune;
 
 	}
 
