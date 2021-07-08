@@ -28,7 +28,7 @@ class AudioSynth extends Object3D {
 		this._progress = 0;
 		this._connected = false;
 
-        // USE THIS FOR FX
+        // USE THIS FOR FX?
 		this.filters = [];
 
 	}
@@ -49,6 +49,53 @@ class AudioSynth extends Object3D {
 		return this;
 
 	}
+
+	createBuffer( nChannels, duration, sRate ) {
+
+		this.nChannels = nChannels;
+		this.duration = duration;
+		this.sRate = sRate;
+
+		this.length = this.duration * this.sRate;
+
+		this.buffer = audioCtx.createBuffer( this.nChannels, this.length, this.sRate );
+		this.bufferArray = new Float32Array( this.length );
+
+		return this;
+
+	}
+
+	sine( freq , amp ) {
+
+		const twoPi = Math.PI*2;
+		let t = 0;
+		let v = 0;
+
+		for(let i=0; i<this.shape.length; i++){
+
+			t = i/this.shape.length;
+			v = amp * (Math.sin( freq * twoPi * t ));
+
+			this.shape[i] = Math.abs(v) <= 0.00013089969352576765 ? 0 : v; 
+
+		}
+
+		return this;
+
+	},
+
+	add() {
+
+		for (this.channel = 0; this.channel<this.buffer.numberOfChannels; this.channel++){
+			this.nowBuffering = this.buffer.getChannelData(this.channel);
+			for (let i=0; i<this.buffer.length; i++){
+				
+				this.nowBuffering[i] += this.shape[i];
+			
+			}
+		}
+
+	},
 
 	setBuffer( audioBuffer ) {
 
