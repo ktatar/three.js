@@ -27,26 +27,23 @@ class AudioBuffer extends Object3D {
 
 	}
 
-	fill() {
+	fill( channel ) {
 
-		for (this.channel = 0; this.channel<this.buffer.numberOfChannels; this.channel++){
-			this.nowBuffering = this.buffer.getChannelData(this.channel);
+			this.nowBuffering = this.buffer.getChannelData( channel );
 			for (let i=0; i<this.buffer.length; i++){
 				
 				this.nowBuffering[i] = this.bufferArray[i];
 			
 			}
-		}
 
 	}
 
-	insert( insertStart, insertEnd ){
+	insert( channel, insertStart, insertEnd ){
 
 		const startSample = parseInt( this.buffer.length * insertStart );
 		const endSample = parseInt( this.buffer.length * insertEnd );
 
-		for (this.channel = 0; this.channel<this.buffer.numberOfChannels; this.channel++){
-			this.nowBuffering = this.buffer.getChannelData(this.channel);
+			this.nowBuffering = this.buffer.getChannelData( channel );
 			for (let i=0; i<this.buffer.length; i++){
 				
 				if( i > startSample && i < endSample ){
@@ -54,59 +51,50 @@ class AudioBuffer extends Object3D {
 				}
 			
 			}
-		}
 
 	}
 
-	add() {
+	add( channel ) {
 
-		for (this.channel = 0; this.channel<this.buffer.numberOfChannels; this.channel++){
-			this.nowBuffering = this.buffer.getChannelData(this.channel);
+			this.nowBuffering = this.buffer.getChannelData( channel );
 			for (let i=0; i<this.buffer.length; i++){
 				
 				this.nowBuffering[i] += this.bufferArray[i];
 			
 			}
-		}
 
 	}
 
-	multiply() {
+	multiply( channel ) {
 
-		for (this.channel = 0; this.channel<this.buffer.numberOfChannels; this.channel++){
-			this.nowBuffering = this.buffer.getChannelData(this.channel);
+			this.nowBuffering = this.buffer.getChannelData( channel );
 			for (let i=0; i<this.buffer.length; i++){
 				
 				this.nowBuffering[i] *= this.bufferArray[i];
 			
 			}
-		}
 
 	}
 
-	divide() {
+	divide( channel ) {
 
-		for (this.channel = 0; this.channel<this.buffer.numberOfChannels; this.channel++){
-			this.nowBuffering = this.buffer.getChannelData(this.channel);
+			this.nowBuffering = this.buffer.getChannelData( channel );
 			for (let i=0; i<this.buffer.length; i++){
 				
 				this.nowBuffering[i] /= this.bufferArray[i];
 			
 			}
-		}
 
 	}
 
-	subtract() {
+	subtract( channel ) {
 
-		for (this.channel = 0; this.channel<this.buffer.numberOfChannels; this.channel++){
-			this.nowBuffering = this.buffer.getChannelData(this.channel);
+			this.nowBuffering = this.buffer.getChannelData( channel );
 			for (let i=0; i<this.buffer.length; i++){
 				
 				this.nowBuffering[i] -= this.bufferArray[i];
 			
 			}
-		}
 
 	}
 
