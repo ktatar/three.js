@@ -14,16 +14,33 @@
 			import * as THREE from '../../build/three.module.js';
             import { AudioSynth } from './jsm/audio/AudioSynth.js'; 
             import { AudioGenerator } from './jsm/audio/AudioGenerator.js'; 
+            import { AudioFX } from './jsm/audio/AudioFX.js'; 
 
             const listener = new THREE.AudioListener();
+
+            // AUDIO SYNTH
             const mySynth = new AudioSynth( listener );
-            const myGenerator = new AudioGenerator( mySynth );
-            myGenerator.createBuffer(1, 1, myGenerator.context.sampleRate).sine(1, 1).add();
+
+            // AUDIO GENERATOR
+            const myGenerator = new AudioGenerator( listener );
+            myGenerator.connect( listener.context.destination );
+
+            myGenerator.createBuffer(1, 1, myGenerator.context.sampleRate);
+            myGenerator.sine(1, 1).add();
             myGenerator.playbackRate = 432;
             myGenerator.loop = true;
+            myGenerator.setVolume( 0.1 );
             myGenerator.play( 0 + myGenerator.context.currentTime );
-            myGenerator.stop( 1 + myGenerator.context.currentTime );
-            
+            myGenerator.stop( 0.5 + myGenerator.context.currentTime );
+
+            // AUDIO FX
+            const myEffect = new AudioFX( listener );
+            myEffect.delay( 0.25, 0.3 ).pan(-1).init();
+
+            myGenerator.connect( myEffect.input );
+            myEffect.connect( listener.context.destination );
+
+            // VISUAL STUFF
             const scene = new THREE.Scene();
             const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
             

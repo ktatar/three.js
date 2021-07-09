@@ -2,17 +2,17 @@ import { Object3D } from '../../../build/three.module.js';
 
 class AudioGenerator extends Object3D {
 
-	constructor( synth ) {
+	constructor( listener ) {
 
 		super();
 
 		this.type = 'AudioGenerator';
 
-		this.synth = synth;
-		this.context = synth.context;
+		this.listener = listener;
+		this.context = listener.context;
 
-		this.gain = this.context.createGain();
-		this.gain.connect( synth.getOutput() );
+		this.output = this.context.createGain();
+		// this.output.connect( synth.getOutput() );
 
         // INITIALIZE PARAMETERS
 		this.autoplay = false;
@@ -36,7 +36,7 @@ class AudioGenerator extends Object3D {
 
 	getOutput() {
 
-		return this.gain;
+		return this.output;
 
 	}
 
@@ -114,19 +114,16 @@ class AudioGenerator extends Object3D {
 		this._startedAt = this.context.currentTime + startTime;
 
 		const source = this.context.createBufferSource();
+		source.connect( this.getOutput() );
+		
 		source.buffer = this.buffer;
 		source.playbackRate.value = this.playbackRate;
 		source.loop = this.loop;
-		source.onended = this.onEnded.bind( this );
 		source.start( startTime );
 
 		this.isPlaying = true;
 
 		this.source = source;
-
-		this.setDetune( this.detune );
-
-		return this.connect();
 
 	}
 
@@ -149,136 +146,31 @@ class AudioGenerator extends Object3D {
 
 	}
 
-    // CONNECT this.source TO this.gain (INSERT FILTERS IF PRESENT)
-	connect() {
+	connect( destination ) {
 
-		if ( this.filters.length > 0 ) {
-
-			this.source.connect( this.filters[ 0 ] );
-
-			for ( let i = 1, l = this.filters.length; i < l; i ++ ) {
-
-				this.filters[ i - 1 ].connect( this.filters[ i ] );
-
-			}
-
-			this.filters[ this.filters.length - 1 ].connect( this.getOutput() );
-
-		} else {
-
-			this.source.connect( this.getOutput() );
-
-		}
-
-		this._connected = true;
+		this.output.connect( destination );
 
 		return this;
 
 	}
 
-    // DISCONNECT SOURCE FROM FILTERS AND OUTPUT
-	disconnect() {
+	disconnect( destination ) {
 
-		if ( this.filters.length > 0 ) {
-
-			this.source.disconnect( this.filters[ 0 ] );
-
-			for ( let i = 1, l = this.filters.length; i < l; i ++ ) {
-
-				this.filters[ i - 1 ].disconnect( this.filters[ i ] );
-
-			}
-
-			this.filters[ this.filters.length - 1 ].disconnect( this.getOutput() );
-
-		} else {
-
-			this.source.disconnect( this.getOutput() );
-
-		}
-
-		this._connected = false;
+		destination ? this.output.disconnect( destination ) : this.output.disconnect();
 
 		return this;
-
-	}
-
-	getFilters() {
-
-		return this.filters;
-
-	}
-
-    // APPLY AN ARRAY OF FILTER NODES TO THE AUDIO
-	setFilters( value ) {
-
-		if ( ! value ) value = [];
-
-		if ( this._connected === true ) {
-
-			this.disconnect();
-			this.filters = value.slice(); // ASSIGN A SHALLOW COPY OF value TO this.filters
-			this.connect();
-
-		} else {
-
-			this.filters = value.slice();
-
-		}
-
-		return this;
-
-	}
-
-	setDetune( value ) {
-
-		this.detune = value;
-
-		if ( this.source.detune === undefined ) return; // only set detune when available
-
-		if ( this.isPlaying === true ) {
-
-			this.source.detune.setTargetAtTime( this.detune, this.context.currentTime, 0.01 );
-
-		}
-
-		return this;
-
-	}
-
-	getDetune() {
-
-		return this.detune;
-
-	}
-
-	getFilter() {
-
-		return this.getFilters()[ 0 ];
-
-	}
-
-	setFilter( filter ) {
-
-		return this.setFilters( filter ? [ filter ] : [] );
-
-	}
-
-	onEnded() {
-
-		this.isPlaying = false;
 
 	}
 
 	getVolume() {
 
-		return this.gain.gain.value;
+		return this.output.gain.value;
 
 	}
 
 	setVolume( value ) {
 
-		this.gain.gain.setTargetAtTime( value, this.context.currentTime, 0.01 );
+		this.output.gain.value = value;
 
 		return this;
 
