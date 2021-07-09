@@ -13,13 +13,16 @@
 
 			import * as THREE from '../../build/three.module.js';
             import { AudioSynth } from './jsm/audio/AudioSynth.js'; 
+            import { AudioGenerator } from './jsm/audio/AudioGenerator.js'; 
 
             const listener = new THREE.AudioListener();
             const mySynth = new AudioSynth( listener );
-            mySynth.createBuffer(1, 1, mySynth.context.sampleRate).sine(1, 1).add();
-            mySynth.playbackRate = 432;
-            mySynth.loop = true;
-            mySynth.play(0);
+            const myGenerator = new AudioGenerator( mySynth );
+            myGenerator.createBuffer(1, 1, myGenerator.context.sampleRate).sine(1, 1).add();
+            myGenerator.playbackRate = 432;
+            myGenerator.loop = true;
+            myGenerator.play( 0 + myGenerator.context.currentTime );
+            myGenerator.stop( 1 + myGenerator.context.currentTime );
             
             const scene = new THREE.Scene();
             const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );

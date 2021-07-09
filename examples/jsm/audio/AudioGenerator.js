@@ -2,17 +2,17 @@ import { Object3D } from '../../../build/three.module.js';
 
 class AudioGenerator extends Object3D {
 
-	constructor( listener ) {
+	constructor( synth ) {
 
 		super();
 
 		this.type = 'AudioGenerator';
 
-		this.listener = listener;
-		this.context = listener.context;
+		this.synth = synth;
+		this.context = synth.context;
 
 		this.gain = this.context.createGain();
-		this.gain.connect( listener.getInput() );
+		this.gain.connect( synth.getOutput() );
 
         // INITIALIZE PARAMETERS
 		this.autoplay = false;
@@ -109,30 +109,16 @@ class AudioGenerator extends Object3D {
 
 	}
 
-	play( delay = 0 ) {
+	play( startTime ) {
 
-		if ( this.isPlaying === true ) {
-
-			console.warn( 'THREE.Audio: Audio is already playing.' );
-			return;
-
-		}
-
-		if ( this.hasPlaybackControl === false ) {
-
-			console.warn( 'THREE.Audio: this Audio has no playback control.' );
-			return;
-
-		}
-
-		this._startedAt = this.context.currentTime + delay;
+		this._startedAt = this.context.currentTime + startTime;
 
 		const source = this.context.createBufferSource();
 		source.buffer = this.buffer;
-		source.buffer.playbackRate = this.playbackRate;
+		source.playbackRate.value = this.playbackRate;
 		source.loop = this.loop;
 		source.onended = this.onEnded.bind( this );
-		source.start();
+		source.start( startTime );
 
 		this.isPlaying = true;
 
@@ -144,7 +130,7 @@ class AudioGenerator extends Object3D {
 
 	}
 
-	stop() {
+	stop( stopTime ) {
 
 		if ( this.hasPlaybackControl === false ) {
 
@@ -155,7 +141,7 @@ class AudioGenerator extends Object3D {
 
 		this._progress = 0;
 
-		this.source.stop();
+		this.source.stop( stopTime );
 		this.source.onended = null;
 		this.isPlaying = false;
 
