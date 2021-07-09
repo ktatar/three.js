@@ -77,6 +77,17 @@ class AudioFX extends Object3D {
 
 	}
 
+	convolver ( buffer ){
+
+		const convolver = this.context.createConvolver( buffer.nChannels, buffer.length, this.context.sampleRate );
+		convolver.buffer = buffer;
+
+		this.fx.push( convolver );
+
+		return this;
+
+	}
+
 	init() {
 
 		this.input.connect( this.fx[ 0 ] );

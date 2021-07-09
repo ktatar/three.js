@@ -27,6 +27,11 @@
             myBuffer.createBuffer( 1 , 1 );
             myBuffer.sawtooth(1).add();
 
+            const convolverBuffer = new AudioBuffer( listener );
+            convolverBuffer.createBuffer( 2 , 2 );
+            convolverBuffer.noise().add();
+            convolverBuffer.inverseSawtooth(2).multiply();
+
             // AUDIO GENERATOR
             const myGenerator = new AudioGenerator( listener );
             myGenerator.connect( listener.context.destination );
@@ -40,8 +45,15 @@
             const myEffect = new AudioFX( listener );
             myEffect.delay( 0.25, 0.3 ).pan(-1).filter("lowpass", 1000, 1, 0).init();
 
+            const myReverb = new AudioFX( listener );
+            myReverb.convolver( convolverBuffer.buffer ).init();
+            myReverb.setVolume(4);
+
             myGenerator.connect( myEffect.input );
             myEffect.connect( listener.context.destination );
+
+            myGenerator.connect( myReverb.input );
+            myReverb.connect( listener.context.destination );
 
             // VISUAL STUFF
             const scene = new THREE.Scene();
