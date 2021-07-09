@@ -88,6 +88,18 @@ class AudioFX extends Object3D {
 
 	}
 
+	waveShaper ( buffer ){
+
+		const waveshaper = this.context.createWaveShaper();
+		const curve = buffer.getChannelData( 0 );
+		waveshaper.curve = curve;
+
+		this.fx.push( waveshaper );
+
+		return this;
+
+	}
+
 	init() {
 
 		this.input.connect( this.fx[ 0 ] );

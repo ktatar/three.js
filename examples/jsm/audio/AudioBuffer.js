@@ -361,6 +361,21 @@ class AudioBuffer extends Object3D {
 
 	}
 
+	sigmoid( amount ) {
+
+		const n_samples = this.context.sampleRate;
+		const deg = Math.PI / 180;
+		let x;
+   
+			for (var i=0; i<n_samples; i++) {
+			x = i * 2 / n_samples - 1;
+			this.bufferArray[i] = ( 3 + amount ) * x * 20 * deg / ( Math.PI + amount * Math.abs(x) );
+			}
+
+		return this;
+   
+	}
+
 }
 
 export { AudioBuffer };
