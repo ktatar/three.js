@@ -100,6 +100,21 @@ class AudioFX extends Object3D {
 
 	}
 
+	dynamicsCompressor(ratio, attack, release, threshold, reduction) {
+
+		const compressor = this.context.createDynamicsCompressor();
+		compressor.ratio.value = ratio;
+		compressor.attack.value = attack;
+		compressor.release.value = release;
+		compressor.threshold.value = threshold;
+		compressor.reduction.value = reduction;
+
+		this.fx.push( compressor );
+
+		return this;
+
+	}
+
 	init() {
 
 		this.input.connect( this.fx[ 0 ] );
