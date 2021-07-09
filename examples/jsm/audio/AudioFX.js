@@ -63,6 +63,20 @@ class AudioFX extends Object3D {
 
 	}
 
+	filter ( type, frequency, Q, gain ){
+
+		const filter = this.context.createBiquadFilter();
+		filter.type = 'type';
+		filter.frequency.value = frequency;
+		filter.Q.value = Q;
+		filter.gain.value = gain;
+
+		this.fx.push( filter );
+
+		return this;
+
+	}
+
 	init() {
 
 		this.input.connect( this.fx[ 0 ] );

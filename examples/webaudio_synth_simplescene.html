@@ -26,16 +26,16 @@
             myGenerator.connect( listener.context.destination );
 
             myGenerator.createBuffer(1, 1, myGenerator.context.sampleRate);
-            myGenerator.sine(1, 1).add();
+            myGenerator.sawtooth(1).add();
             myGenerator.playbackRate = 432;
             myGenerator.loop = true;
-            myGenerator.setVolume( 0.1 );
+            myGenerator.setVolume( 0.05 );
             myGenerator.play( 0 + myGenerator.context.currentTime );
             myGenerator.stop( 0.5 + myGenerator.context.currentTime );
 
             // AUDIO FX
             const myEffect = new AudioFX( listener );
-            myEffect.delay( 0.25, 0.3 ).pan(-1).init();
+            myEffect.delay( 0.25, 0.3 ).pan(-1).filter("lowpass", 1000, 1, 0).init();
 
             myGenerator.connect( myEffect.input );
             myEffect.connect( listener.context.destination );

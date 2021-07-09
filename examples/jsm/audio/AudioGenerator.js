@@ -85,6 +85,16 @@ class AudioGenerator extends Object3D {
 
 	}
 
+	sawtooth(exp) {
+
+		for (let i=0; i<this.bufferArray.length; i++){
+			this.bufferArray[i] = Math.pow((i/this.bufferArray.length), exp);
+		}
+
+		return this;
+
+	}
+
 	add() {
 
 		for (this.channel = 0; this.channel<this.buffer.numberOfChannels; this.channel++){
@@ -115,7 +125,7 @@ class AudioGenerator extends Object3D {
 
 		const source = this.context.createBufferSource();
 		source.connect( this.getOutput() );
-		
+
 		source.buffer = this.buffer;
 		source.playbackRate.value = this.playbackRate;
 		source.loop = this.loop;
