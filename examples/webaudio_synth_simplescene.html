@@ -14,6 +14,7 @@
 			import * as THREE from '../../build/three.module.js';
             import { AudioSynth } from './jsm/audio/AudioSynth.js'; 
             import { AudioGenerator } from './jsm/audio/AudioGenerator.js'; 
+            import { AudioBuffer } from './jsm/audio/AudioBuffer.js'; 
             import { AudioFX } from './jsm/audio/AudioFX.js'; 
 
             const listener = new THREE.AudioListener();
@@ -21,17 +22,19 @@
             // AUDIO SYNTH
             const mySynth = new AudioSynth( listener );
 
+            // AUDIO BUFFER
+            const myBuffer = new AudioBuffer( listener );
+            myBuffer.createBuffer( 1 , 1 );
+            myBuffer.sawtooth(1).add();
+
             // AUDIO GENERATOR
             const myGenerator = new AudioGenerator( listener );
             myGenerator.connect( listener.context.destination );
 
-            myGenerator.createBuffer(1, 1, myGenerator.context.sampleRate);
-            myGenerator.sawtooth(1).add();
             myGenerator.playbackRate = 432;
             myGenerator.loop = true;
             myGenerator.setVolume( 0.05 );
-            myGenerator.play( 0 + myGenerator.context.currentTime );
-            myGenerator.stop( 0.5 + myGenerator.context.currentTime );
+            myGenerator.play( myBuffer.buffer , 0 + myGenerator.context.currentTime, 0.5 + myGenerator.context.currentTime );
 
             // AUDIO FX
             const myEffect = new AudioFX( listener );

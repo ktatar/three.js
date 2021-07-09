@@ -40,119 +40,24 @@ class AudioGenerator extends Object3D {
 
 	}
 
-	setNodeSource( audioNode ) {
-
-		this.hasPlaybackControl = false;
-		this.sourceType = 'audioNode';
-		this.source = audioNode;
-		this.connect();
-
-		return this;
-
-	}
-
-	createBuffer( nChannels, duration, sRate ) {
-
-		this.nChannels = nChannels;
-		this.duration = duration;
-		this.sRate = sRate;
-
-		this.length = this.duration * this.sRate;
-
-		this.buffer = this.context.createBuffer( this.nChannels, this.length, this.sRate );
-		this.bufferArray = new Float32Array( this.length );
-
-		return this;
-
-	}
-
-	sine( frequency , amp ) {
-
-		const twoPi = Math.PI*2;
-		let t = 0;
-		let v = 0;
-
-		for(let i=0; i<this.bufferArray.length; i++){
-
-			t = i/this.bufferArray.length;
-			v = amp * (Math.sin( frequency * twoPi * t ));
-
-			this.bufferArray[i] = Math.abs(v) <= 0.00013089969352576765 ? 0 : v; 
-
-		}
-
-		return this;
-
-	}
-
-	sawtooth(exp) {
-
-		for (let i=0; i<this.bufferArray.length; i++){
-			this.bufferArray[i] = Math.pow((i/this.bufferArray.length), exp);
-		}
-
-		return this;
-
-	}
-
-	add() {
-
-		for (this.channel = 0; this.channel<this.buffer.numberOfChannels; this.channel++){
-			this.nowBuffering = this.buffer.getChannelData(this.channel);
-			for (let i=0; i<this.buffer.length; i++){
-				
-				this.nowBuffering[i] += this.bufferArray[i];
-			
-			}
-		}
-
-	}
-
-	setBuffer( audioBuffer ) {
-
-		this.buffer = audioBuffer;
-		this.sourceType = 'buffer';
-
-		if ( this.autoplay ) this.play();
-
-		return this;
-
-	}
-
-	play( startTime ) {
+	play( buffer, startTime , stopTime ) {
 
 		this._startedAt = this.context.currentTime + startTime;
 
 		const source = this.context.createBufferSource();
 		source.connect( this.getOutput() );
 
-		source.buffer = this.buffer;
+		source.buffer = buffer;
 		source.playbackRate.value = this.playbackRate;
 		source.loop = this.loop;
+
 		source.start( startTime );
 
-		this.isPlaying = true;
-
-		this.source = source;
-
-	}
-
-	stop( stopTime ) {
-
-		if ( this.hasPlaybackControl === false ) {
-
-			console.warn( 'THREE.Audio: this Audio has no playback control.' );
-			return;
-
+		if( stopTime ){
+			source.stop( stopTime );
 		}
 
-		this._progress = 0;
-
-		this.source.stop( stopTime );
-		this.source.onended = null;
-		this.isPlaying = false;
-
-		return this;
+		this.isPlaying = true;
 
 	}
 
