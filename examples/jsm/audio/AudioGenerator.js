@@ -12,7 +12,6 @@ class AudioGenerator extends Object3D {
 		this.context = listener.context;
 
 		this.output = this.context.createGain();
-		// this.output.connect( synth.getOutput() );
 
         // INITIALIZE PARAMETERS
 		this.autoplay = false;
@@ -44,14 +43,14 @@ class AudioGenerator extends Object3D {
 
 		this._startedAt = this.context.currentTime + startTime;
 
-		const source = this.context.createBufferSource();
-		source.connect( this.getOutput() );
+		this.source = this.context.createBufferSource();
+		this.source.connect( this.getOutput() );
 
-		source.buffer = buffer;
-		source.playbackRate.value = this.playbackRate;
-		source.loop = this.loop;
+		this.source.buffer = buffer;
+		this.source.playbackRate.value = this.playbackRate;
+		this.source.loop = this.loop;
 
-		source.start( startTime );
+		this.source.start( startTime );
 
 		this.isPlaying = true;
 
@@ -59,7 +58,7 @@ class AudioGenerator extends Object3D {
 
 	stop( stopTime ) {
 
-		source.stop( stopTime );
+		this.source.stop( stopTime );
 
 		this.isPlaying = false;
 
@@ -114,7 +113,7 @@ class AudioGenerator extends Object3D {
 		else{
 
 			this.output.gain.value = value;
-			
+
 		}
 
 		return this;
