@@ -22,29 +22,36 @@
             // AUDIO SYNTH
             const mySynth = new AudioSynth( listener );
 
-            // AUDIO BUFFER
-            const myBuffer = new AudioBuffer( listener );
-            myBuffer.createBuffer( 1 , 1 );
-            myBuffer.sine( 432 , 1 ).add();
-            myBuffer.ramp( 0 , 1 , 0.01 , 0.015 , 0.1 , 5 ).multiply();
+            // OSCILLATOR BUFFER
+            const oscBuffer = new AudioBuffer( listener );
+            oscBuffer.createBuffer( 1 , 1 );
+            oscBuffer.sine( 1 , 1 ).add();
+
+            const oscGenerator = new AudioGenerator( listener );
+            oscGenerator.playbackRate = 432;
+            oscGenerator.loop = true;
+            oscGenerator.setGain( 0 );
+
+            const envBuffer = new AudioBuffer( listener );
+            envBuffer.createBuffer( 1 , 1 );
+            envBuffer.ramp( 0 , 1 , 0.01 , 0.015 , 0.1 , 2 ).add();
+
+            const envGenerator = new AudioGenerator( listener );
 
             // AUDIO GENERATOR
-            const myGenerator = new AudioGenerator( listener );
-            myGenerator.connect( listener.getInput() );
 
-            myGenerator.playbackRate = 1;
-            // myGenerator.loop = true;
-            myGenerator.setGain( 0.05 );
-            
-            myGenerator.start( myBuffer.buffer , 0 + myGenerator.context.currentTime );
-            myGenerator.stop( 0.25 + myGenerator.context.currentTime );
+            envGenerator.connect( oscGenerator.output.gain );
+            oscGenerator.connect( listener.getInput() );
 
-            myGenerator.start( myBuffer.buffer , 1 + myGenerator.context.currentTime );
-            myGenerator.stop( 1.5 + myGenerator.context.currentTime );
-            myGenerator.setGain( 0.2 , 1 + myGenerator.context.currentTime );
-            myGenerator.setPlaybackRate( 2 , 1 + myGenerator.context.currentTime );
+            oscGenerator.start( oscBuffer.buffer , 0 );
 
-            myGenerator.connect( listener.getInput() );
+            envGenerator.start( envBuffer.buffer , 0 + envBuffer.context.currentTime );
+            envGenerator.setGain( 0.25 , 0 + envBuffer.context.currentTime );
+            envGenerator.setPlaybackRate( 1 , 0 + envBuffer.context.currentTime);
+
+            envGenerator.start( envBuffer.buffer , 1 + envBuffer.context.currentTime );
+            envGenerator.setGain( 0.125 , 1 + envBuffer.context.currentTime );
+            envGenerator.setPlaybackRate( 10 , 1 + envBuffer.context.currentTime);
 
             // VISUAL STUFF
             const scene = new THREE.Scene();
