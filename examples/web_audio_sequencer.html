@@ -46,6 +46,7 @@
 
             myGenerator.start( myBuffer2.buffer , 1 + myGenerator.context.currentTime );
             myGenerator.stop( 1.5 + myGenerator.context.currentTime );
+            myGenerator.setGain( 0.2 , 1 + myGenerator.context.currentTime );
 
             myGenerator.connect( listener.getInput() );
 
