@@ -42,9 +42,10 @@
 
             myGenerator.playbackRate = 432;
             myGenerator.loop = true;
-            myGenerator.setVolume( 0.05 );
+            myGenerator.setGain( 0.05 );
             
-            myGenerator.play( myBuffer.buffer , 0 + myGenerator.context.currentTime, 0.5 + myGenerator.context.currentTime );
+            myGenerator.start( myBuffer.buffer , 0 + myGenerator.context.currentTime );
+            myGenerator.stop( 0.5 + myGenerator.context.currentTime );
 
             // AUDIO FX
             const myEffect = new AudioFX( listener );

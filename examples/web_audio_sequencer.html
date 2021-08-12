@@ -28,11 +28,6 @@
             myBuffer.sine( 432 , 1 ).add();
             myBuffer.ramp( 0 , 1 , 0.01 , 0.015 , 0.1 , 5 ).multiply();
 
-            const myBuffer2 = new AudioBuffer( listener );
-            myBuffer2.createBuffer( 1 , 1 );
-            myBuffer2.sine( 432 * 2 , 1 ).add();
-            myBuffer2.ramp( 0 , 1 , 0.01 , 0.015 , 0.1 , 5 ).multiply();
-
             // AUDIO GENERATOR
             const myGenerator = new AudioGenerator( listener );
             myGenerator.connect( listener.getInput() );
@@ -44,9 +39,10 @@
             myGenerator.start( myBuffer.buffer , 0 + myGenerator.context.currentTime );
             myGenerator.stop( 0.25 + myGenerator.context.currentTime );
 
-            myGenerator.start( myBuffer2.buffer , 1 + myGenerator.context.currentTime );
+            myGenerator.start( myBuffer.buffer , 1 + myGenerator.context.currentTime );
             myGenerator.stop( 1.5 + myGenerator.context.currentTime );
             myGenerator.setGain( 0.2 , 1 + myGenerator.context.currentTime );
+            myGenerator.setPlaybackRate( 2 , 1 + myGenerator.context.currentTime );
 
             myGenerator.connect( listener.getInput() );
 

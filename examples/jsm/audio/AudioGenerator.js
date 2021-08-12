@@ -107,12 +107,12 @@ class AudioGenerator extends Object3D {
 
 		if( time ){
 
-			this.output.gain.setValueAtTime( value , time );
+			this.source.playbackRate.setValueAtTime( value , time );
 
 		}
 		else{
 
-			this.output.gain.value = value;
+			this.playbackRate = value;
 
 		}
 
