@@ -40,7 +40,7 @@ class AudioGenerator extends Object3D {
 
 	}
 
-	play( buffer, startTime , stopTime ) {
+	start( buffer , startTime ) {
 
 		this._startedAt = this.context.currentTime + startTime;
 
@@ -53,11 +53,15 @@ class AudioGenerator extends Object3D {
 
 		source.start( startTime );
 
-		if( stopTime ){
-			source.stop( stopTime );
-		}
-
 		this.isPlaying = true;
+
+	}
+
+	stop( stopTime ) {
+
+		source.stop( stopTime );
+
+		this.isPlaying = false;
 
 	}
 
@@ -77,15 +81,41 @@ class AudioGenerator extends Object3D {
 
 	}
 
-	getVolume() {
+	getGain() {
 
 		return this.output.gain.value;
 
 	}
 
-	setVolume( value ) {
+	setGain( value , time ) {
 
-		this.output.gain.value = value;
+		if( time ){
+
+			this.output.gain.setValueAtTime( value , time );
+
+		}
+		else{
+
+			this.output.gain.value = value;
+
+		}
+
+		return this;
+
+	}
+
+	setPlaybackRate( value , time ) {
+
+		if( time ){
+
+			this.output.gain.setValueAtTime( value , time );
+
+		}
+		else{
+
+			this.output.gain.value = value;
+			
+		}
 
 		return this;
 

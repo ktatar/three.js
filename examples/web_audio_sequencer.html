@@ -26,16 +26,17 @@
             const myBuffer = new AudioBuffer( listener );
             myBuffer.createBuffer( 1 , 1 );
             myBuffer.sine( 432 , 1 ).add();
+            myBuffer.ramp( 0 , 1 , 0.01 , 0.015 , 0.1 , 5 ).multiply();
 
             // AUDIO GENERATOR
             const myGenerator = new AudioGenerator( listener );
             myGenerator.connect( listener.getInput() );
 
             myGenerator.playbackRate = 1;
-            myGenerator.loop = true;
-            myGenerator.setVolume( 0.05 );
+            // myGenerator.loop = true;
+            myGenerator.setGain( 0.05 );
             
-            myGenerator.play( myBuffer.buffer , 0 + myGenerator.context.currentTime, 0.5 + myGenerator.context.currentTime );
+            myGenerator.start( myBuffer.buffer , 0 + myGenerator.context.currentTime );
 
             myGenerator.connect( listener.getInput() );
 
