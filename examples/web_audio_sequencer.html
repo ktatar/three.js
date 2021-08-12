@@ -45,6 +45,7 @@
             myGenerator.setVolume( 0.05 );
             
             myGenerator.play( myBuffer.buffer , 0 + myGenerator.context.currentTime, 0.5 + myGenerator.context.currentTime );
+            myGenerator.play( myBuffer.buffer , 1 + myGenerator.context.currentTime, 2 + myGenerator.context.currentTime );
 
             // AUDIO FX
             const myEffect = new AudioFX( listener );

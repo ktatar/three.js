@@ -27,6 +27,8 @@ class AudioBuffer extends Object3D {
 
 	}
 
+	// OPERATIONS
+
 	fill( channel ) {
 
 			this.nowBuffering = this.buffer.getChannelData( channel );
@@ -97,6 +99,8 @@ class AudioBuffer extends Object3D {
 			}
 
 	}
+
+	// SHAPES
 
 	sine( frequency , amp ) {
 
