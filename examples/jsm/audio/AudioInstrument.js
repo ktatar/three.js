@@ -1,6 +1,6 @@
 import { Object3D } from '../../../build/three.module.js';
 
-class AudioSynth extends Object3D {
+class AudioInstrument extends Object3D {
 
 	constructor( listener ) {
 
@@ -137,4 +137,4 @@ class AudioSynth extends Object3D {
 
 }
 
-export { AudioSynth };
+export { AudioInstrument };

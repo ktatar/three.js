@@ -12,7 +12,7 @@
 		<script type="module">
 
 			import * as THREE from '../../build/three.module.js';
-            import { AudioSynth } from './jsm/audio/AudioSynth.js'; 
+            import { AudioInstrument } from './jsm/audio/AudioInstrument.js'; 
             import { AudioGenerator } from './jsm/audio/AudioGenerator.js'; 
             import { AudioBuffer } from './jsm/audio/AudioBuffer.js'; 
             import { AudioFX } from './jsm/audio/AudioFX.js'; 
@@ -20,7 +20,7 @@
             const listener = new THREE.AudioListener();
 
             // AUDIO SYNTH
-            const mySynth = new AudioSynth( listener );
+            const myInstrument = new AudioInstrument( listener );
 
             // AUDIO BUFFER
             const myBuffer = new AudioBuffer( listener );
