@@ -43,13 +43,13 @@
             envGenerator.connect( oscGenerator.output.gain );
             oscGenerator.connect( listener.getInput() );
 
-            oscGenerator.start( oscBuffer.buffer , 0 );
+            oscGenerator.start( 0 , oscBuffer.buffer );
 
-            envGenerator.start( envBuffer.buffer , 0 + envBuffer.context.currentTime );
+            envGenerator.start( 0 + envBuffer.context.currentTime , envBuffer.buffer , );
             envGenerator.setGain( 0.25 , 0 + envBuffer.context.currentTime );
             envGenerator.setPlaybackRate( 1 , 0 + envBuffer.context.currentTime);
 
-            envGenerator.start( envBuffer.buffer , 1 + envBuffer.context.currentTime );
+            envGenerator.start( 1 + envBuffer.context.currentTime , envBuffer.buffer , );
             envGenerator.setGain( 0.125 , 1 + envBuffer.context.currentTime );
             envGenerator.setPlaybackRate( 10 , 1 + envBuffer.context.currentTime);
 

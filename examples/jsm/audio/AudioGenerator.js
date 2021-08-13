@@ -39,7 +39,7 @@ class AudioGenerator extends Object3D {
 
 	}
 
-	start( buffer , startTime ) {
+	start( startTime , buffer ) {
 
 		this._startedAt = this.context.currentTime + startTime;
 
