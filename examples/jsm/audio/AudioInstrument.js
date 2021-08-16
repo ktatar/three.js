@@ -6,7 +6,7 @@ class AudioInstrument extends Object3D {
 
 		super();
 
-		this.type = 'AudioSynth';
+		this.type = 'AudioInstrument';
 
 		this.listener = listener;
 		this.context = listener.context;
@@ -101,7 +101,7 @@ class AudioInstrument extends Object3D {
 
 		return this;
 
-	}
+	}cc 
 
 	getFilter() {
 
