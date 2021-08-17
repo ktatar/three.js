@@ -31,8 +31,10 @@
             oscBuffer.createBuffer( 1 , 1 );
             oscBuffer.sine( 1 , 1 ).add();
 
+            const oscGeneratorFund = 432;
+
             const oscGenerator = new AudioGenerator( listener );
-            oscGenerator.playbackRate = 432;
+            oscGenerator.playbackRate = oscGeneratorFund;
             oscGenerator.loop = true;
             oscGenerator.setGain( 0 );
 
@@ -46,14 +48,36 @@
 
             const envGenerator = new AudioGenerator( listener );
 
-            // SEQUENCE
+            // SEQUENCES
 
-            let seq = new AudioSequence();
+            const seqLength = 5;
 
-            seq.duplicates( 5 , 10 );
-            seq = seq.sequence;
+            let startSeq = new AudioSequence();
+            let pitchSeq = new AudioSequence();
+            let bufferSeq = new AudioSequence();
+            let durationSeq = new AudioSequence();
+            let gainSeq = new AudioSequence();
 
-            console.log( seq );
+            startSeq.duplicates( seqLength , 1 );
+            startSeq.sumSequence();
+            startSeq.add(listener.context.currentTime);
+
+            pitchSeq.randomSelect( seqLength , [ 1 , 9/8 , 5/4 , 4/3 , 3/2 , 5/3 , 2 ] );
+            pitchSeq.multiply( oscGeneratorFund );
+
+            bufferSeq.randomSelect( seqLength , [ envBuffer.buffer , envBuffer2.buffer ] );
+            
+            durationSeq.randomFloats( seqLength , 1 , 2 );
+
+            gainSeq.randomFloats( seqLength , 0.25 , 0.6 );
+
+            startSeq = startSeq.sequence;
+            pitchSeq = pitchSeq.sequence;
+            bufferSeq = bufferSeq.sequence;
+            durationSeq = durationSeq.sequence;
+            gainSeq = gainSeq.sequence;
+
+            console.log( `START SEQUENCE: ${ startSeq } PITCH SEQUENCE: ${ pitchSeq } BUFFER SEQUENCE: ${ bufferSeq } DURATION SEQUENCE: ${ durationSeq } GAIN SEQUENCE: ${ gainSeq }` );
 
             // AUDIO GENERATOR
 
@@ -62,8 +86,14 @@
 
             oscGenerator.start( 0 , oscBuffer.buffer );
 
-            envGenerator.play( 0 + envGenerator.context.currentTime , envBuffer.buffer , 1 , 0.25 );
-            envGenerator.play( 1.25 + envGenerator.context.currentTime , envBuffer2.buffer , 1 , 0.0625 );
+
+            for( let i = 0 ; i < seqLength ; i++ ){
+
+                // startTime , buffer , playbackRate , gain
+                envGenerator.play( startSeq[ i ] , bufferSeq[ i ] , durationSeq[ i ] , gainSeq[ i ] );
+                oscGenerator.setPlaybackRate( pitchSeq[ i ] , startSeq[ i ] );
+
+            }
 
             // VISUAL STUFF
 

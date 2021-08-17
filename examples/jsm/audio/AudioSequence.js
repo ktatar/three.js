@@ -60,7 +60,7 @@ class AudioSequence extends Object3D {
 
 		for(var i=0; i<this.length; i++) {
 			this.sequence[i] = this.v;
-			this.v += this.valuesArray[randomInt(0, this.valuesArray.length)];
+			this.v += this.valuesArray[ Math.floor( Math.random() * this.valuesArray.length )];
 		}
 
 		return this.sequence;
@@ -181,7 +181,7 @@ class AudioSequence extends Object3D {
 		this.valuesArray = valuesArray;
 
 		for(var i=0; i<this.length; i++) {
-			this.sequence[i] = this.valuesArray[randomInt(0, this.valuesArray.length)];
+			this.sequence[i] = this.valuesArray[ Math.floor( Math.random() * this.valuesArray.length ) ];
 		}
 
 		return this.sequence;
@@ -209,7 +209,7 @@ class AudioSequence extends Object3D {
 		this.max = max;
 
 		for(var i=0; i<this.length; i++) {
-			this.sequence[i] = randomFloat(this.min, this.max);
+			this.sequence[i] = ( this.min + Math.random() ) * ( this.max - this.min );
 		}
 
 		return this.sequence;
@@ -223,7 +223,7 @@ class AudioSequence extends Object3D {
 		this.max = max;
 
 		for(var i=0; i<this.length; i++) {
-			this.sequence[i] = randomInt(this.min, this.max);
+			this.sequence[i] = Math.floor( ( this.min + Math.random() ) * ( this.max - this.min ) );
 		}
 
 		return this.sequence;
