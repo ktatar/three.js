@@ -22,9 +22,11 @@
             const listener = new THREE.AudioListener();
 
             // AUDIO SYNTH
+
             const myInstrument = new AudioInstrument( listener );
 
             // OSCILLATOR BUFFER
+
             const oscBuffer = new AudioBuffer( listener );
             oscBuffer.createBuffer( 1 , 1 );
             oscBuffer.sine( 1 , 1 ).add();
@@ -44,6 +46,15 @@
 
             const envGenerator = new AudioGenerator( listener );
 
+            // SEQUENCE
+
+            let seq = new AudioSequence();
+
+            seq.duplicates( 5 , 10 );
+            seq = seq.sequence;
+
+            console.log( seq );
+
             // AUDIO GENERATOR
 
             envGenerator.connect( oscGenerator.output.gain );
@@ -55,6 +66,7 @@
             envGenerator.play( 1.25 + envGenerator.context.currentTime , envBuffer2.buffer , 1 , 0.0625 );
 
             // VISUAL STUFF
+
             const scene = new THREE.Scene();
             const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
             

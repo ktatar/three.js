@@ -8,6 +8,8 @@ class AudioSequence extends Object3D {
 
 		this.type = 'AudioSequence';
 
+		this.sequence = [];
+
 	}
 
 	duplicates( length , value ) {
