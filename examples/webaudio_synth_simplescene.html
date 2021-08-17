@@ -44,7 +44,7 @@
             myGenerator.loop = true;
             myGenerator.setGain( 0.05 );
             
-            myGenerator.start( myBuffer.buffer , 0 + myGenerator.context.currentTime );
+            myGenerator.start(  0 + myGenerator.context.currentTime , myBuffer.buffer );
             myGenerator.stop( 0.5 + myGenerator.context.currentTime );
 
             // AUDIO FX
