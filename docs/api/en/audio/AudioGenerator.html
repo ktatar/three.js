@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<base href="../../../" />
+		<script src="page.js"></script>
+		<link type="text/css" rel="stylesheet" href="page.css" />
+	</head>
+	<body>
+		[page:Object3D] &rarr;
+
+		<h1>[name]</h1>
+
+		<p class="desc">
+			AudioGenerator loops an audio buffer to create an audio oscillator, similar to audio synths in early games. <br /><br />
+
+			This uses the [link:https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API Web Audio API].
+		</p>
+
+		<h2>Code Example</h2>
+
+		<code>
+
+		// Create an AudioListener
+		const listener = new THREE.AudioListener();
+
+		// Create an AudioInstrument
+		const myInstrument = new AudioInstrument( listener );
+
+		// Create an AudioBuffer
+		const myBuffer = new AudioBuffer( listener );
+		myBuffer.createBuffer( 1 , 1 );
+		myBuffer.sawtooth( 1 ).add();
+
+		// Create an AudioGenerator, similar to an audio oscillator
+		const myGenerator = new AudioGenerator( listener );
+		myGenerator.connect( listener.getInput() );
+
+		// Set the frequency and the gain of the AudioGenerator
+		myGenerator.playbackRate = 432;
+		myGenerator.loop = true;
+		myGenerator.setGain( 0.05 );
+		
+		// Make a sound using the AudioGenerator and the AudioBuffer
+		myGenerator.start(  0 + myGenerator.context.currentTime , myBuffer.buffer );
+		myGenerator.stop( 0.5 + myGenerator.context.currentTime );
+
+		</code>
+
+		<h2>Examples</h2>
+
+		<p>
+			[example:webaudio_synth_simplescene webaudio / synth / simplescene ]
+		</p>
+
+		<h2>Constructor</h2>
+
+
+		<h2>Properties</h2>
+
+		<h2>Methods</h2>
+
+		<h2>Source</h2>
+
+		<p>
+			[link:https://github.com/mrdoob/three.js/blob/audiosynth/jsm/[path].js jsm/[path].js]
+		</p>
+	</body>
+</html>
