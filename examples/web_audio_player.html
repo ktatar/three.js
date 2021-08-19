@@ -2,7 +2,7 @@
 <html>
 	<html lang="en">
 	<head>
-		<title>three.js webaudio - audio sequencer</title>
+		<title>three.js webaudio - audio player</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<link type="text/css" rel="stylesheet" href="main.css">
@@ -12,7 +12,7 @@
 		<script type="module">
 
 			import * as THREE from '../../build/three.module.js';
-            import { AudioInstrument } from './jsm/audio/AudioInstrument.js'; 
+            import { AudioPlayer } from './jsm/audio/AudioPlayer.js'; 
             import { AudioGenerator } from './jsm/audio/AudioGenerator.js'; 
             import { AudioBuffer } from './jsm/audio/AudioBuffer.js'; 
             import { AudioSequencer } from './jsm/audio/AudioSequencer.js'; 
@@ -20,10 +20,6 @@
             import { AudioFX } from './jsm/audio/AudioFX.js'; 
 
             const listener = new THREE.AudioListener();
-
-            // AUDIO SYNTH
-
-            const myInstrument = new AudioInstrument( listener );
 
             // OSCILLATOR BUFFER
 
@@ -43,55 +39,38 @@
             envBuffer.ramp( 0 , 1 , 0.01 , 0.015 , 0.1 , 2 ).add();
 
             const envBuffer2 = new AudioBuffer( listener );
-            envBuffer2.createBuffer( 1 , 1 );
+            envBuffer2.createBuffer( 2 , 1 );
             envBuffer2.ramp( 0 , 1 , 0.5 , 0.5 , 1 , 1 ).add();
 
+            // AUDIO GENERATORS
+
             const envGenerator = new AudioGenerator( listener );
+            const envGenerator2 = new AudioGenerator( listener );
 
-            // SEQUENCES
-
-            const seqLength = 5;
-
-            let startSeq = new AudioSequence();
-            let pitchSeq = new AudioSequence();
-            let bufferSeq = new AudioSequence();
-            let durationSeq = new AudioSequence();
-            let gainSeq = new AudioSequence();
-
-            startSeq.duplicates( seqLength , 1 );
-            startSeq.sumSequence();
-            startSeq.add(listener.context.currentTime);
-
-            pitchSeq.randomSelect( seqLength , [ 1 , 9/8 , 5/4 , 4/3 , 3/2 , 5/3 , 2 ] );
-            pitchSeq.multiply( oscGeneratorFund );
-
-            bufferSeq.randomSelect( seqLength , [ envBuffer.buffer , envBuffer2.buffer ] );
-            
-            durationSeq.randomFloats( seqLength , 1 , 2 );
-
-            gainSeq.randomFloats( seqLength , 0.25 , 0.6 );
-
-            startSeq = startSeq.sequence;
-            pitchSeq = pitchSeq.sequence;
-            bufferSeq = bufferSeq.sequence;
-            durationSeq = durationSeq.sequence;
-            gainSeq = gainSeq.sequence;
-
-            // AUDIO GENERATOR
+            // CONECTIONS
 
             envGenerator.connect( oscGenerator.output.gain );
+            envGenerator2.connect( oscGenerator.output.gain );
+
             oscGenerator.connect( listener.getInput() );
 
             oscGenerator.start( 0 , oscBuffer.buffer );
 
+            // AUDIO PLAYER
 
-            for( let i = 0 ; i < seqLength ; i++ ){
+            const myPlayer = new AudioPlayer( listener );
+            myPlayer.addNode( envGenerator );
+            myPlayer.addNode( envGenerator2 );
 
-                // startTime , buffer , playbackRate , gain
-                envGenerator.play( startSeq[ i ] , bufferSeq[ i ] , durationSeq[ i ] , gainSeq[ i ] );
-                oscGenerator.setPlaybackRate( pitchSeq[ i ] , startSeq[ i ] );
+            // you then need an array (or dictionary or whatever data structure)
+            // of these
 
-            }
+            const oneEvent = [ 
+                [ 0 , envBuffer.buffer , 1 , 0.25] ,
+                [ 1 , envBuffer2.buffer , 1 , 0.25]
+            ];
+
+            myPlayer.play( oneEvent );
 
             // VISUAL STUFF
 
