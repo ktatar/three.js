@@ -24,47 +24,39 @@
             // SEQUENCES
 
             const seqLength = 5;
+            const oscGeneratorFund = 432;
+            const envBuffer = [];
+            const envBuffer2 = [];
 
-            let startSeq = new AudioSequence();
+            let timeSeq = new AudioSequence();
             let pitchSeq = new AudioSequence();
             let bufferSeq = new AudioSequence();
             let durationSeq = new AudioSequence();
             let gainSeq = new AudioSequence();
 
-            startSeq.duplicates( seqLength , 1 );
-            startSeq.sumSequence();
-            startSeq.add(listener.context.currentTime);
+            timeSeq.duplicates( seqLength , 1 );
+            timeSeq.sumSequence();
+            timeSeq.add(listener.context.currentTime);
 
             pitchSeq.randomSelect( seqLength , [ 1 , 9/8 , 5/4 , 4/3 , 3/2 , 5/3 , 2 ] );
             pitchSeq.multiply( oscGeneratorFund );
 
-            bufferSeq.randomSelect( seqLength , [ envBuffer.buffer , envBuffer2.buffer ] );
+            bufferSeq.randomSelect( seqLength , [ envBuffer , envBuffer2 ] );
             
             durationSeq.randomFloats( seqLength , 1 , 2 );
 
             gainSeq.randomFloats( seqLength , 0.25 , 0.6 );
 
-            startSeq = startSeq.sequence;
-            pitchSeq = pitchSeq.sequence;
-            bufferSeq = bufferSeq.sequence;
-            durationSeq = durationSeq.sequence;
-            gainSeq = gainSeq.sequence;
+            // SEQUENCE
 
-            // AUDIO GENERATOR
+            const sequencer = new AudioSequencer();
+            sequencer.addSequence( 0 , timeSeq.sequence );
+            sequencer.addSequence( 1 , pitchSeq.sequence );
+            sequencer.addSequence( 2 , bufferSeq.sequence );
+            sequencer.addSequence( 3 , durationSeq.sequence );
+            sequencer.addSequence( 4 , gainSeq.sequence );
 
-            envGenerator.connect( oscGenerator.output.gain );
-            oscGenerator.connect( listener.getInput() );
-
-            oscGenerator.start( 0 , oscBuffer.buffer );
-
-
-            for( let i = 0 ; i < seqLength ; i++ ){
-
-                // startTime , buffer , playbackRate , gain
-                envGenerator.play( startSeq[ i ] , bufferSeq[ i ] , durationSeq[ i ] , gainSeq[ i ] );
-                oscGenerator.setPlaybackRate( pitchSeq[ i ] , startSeq[ i ] );
-
-            }
+            sequencer.outputSequence();
 
             // VISUAL STUFF
 
