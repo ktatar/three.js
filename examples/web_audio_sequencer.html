@@ -21,33 +21,6 @@
 
             const listener = new THREE.AudioListener();
 
-            // AUDIO SYNTH
-
-            const myInstrument = new AudioInstrument( listener );
-
-            // OSCILLATOR BUFFER
-
-            const oscBuffer = new AudioBuffer( listener );
-            oscBuffer.createBuffer( 1 , 1 );
-            oscBuffer.sine( 1 , 1 ).add();
-
-            const oscGeneratorFund = 432;
-
-            const oscGenerator = new AudioGenerator( listener );
-            oscGenerator.playbackRate = oscGeneratorFund;
-            oscGenerator.loop = true;
-            oscGenerator.setGain( 0 );
-
-            const envBuffer = new AudioBuffer( listener );
-            envBuffer.createBuffer( 1 , 1 );
-            envBuffer.ramp( 0 , 1 , 0.01 , 0.015 , 0.1 , 2 ).add();
-
-            const envBuffer2 = new AudioBuffer( listener );
-            envBuffer2.createBuffer( 1 , 1 );
-            envBuffer2.ramp( 0 , 1 , 0.5 , 0.5 , 1 , 1 ).add();
-
-            const envGenerator = new AudioGenerator( listener );
-
             // SEQUENCES
 
             const seqLength = 5;
