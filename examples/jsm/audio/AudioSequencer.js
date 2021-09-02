@@ -36,6 +36,27 @@ class AudioSequencer extends Object3D {
 
 	}
 
+	collateSequence(){
+
+		const subLength = this.sequence[0].length;
+		let tempSequence = [];
+
+		for( let i = 0 ; i < subLength ; i++ ){
+
+			tempSequence[i] = [];
+
+			for( let j = 0 ; j < this.sequence.length ; j++ ){
+
+				tempSequence[i][j] = this.sequence[j][i];
+
+			}
+
+		}
+
+		this.sequence = tempSequence;
+
+	}
+
 	playSequence( instrument , timeValueArray ){
 
 		for( let i = 0 ; i < timeValueArray.length ; i++ ){

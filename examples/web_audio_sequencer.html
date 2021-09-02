@@ -18,15 +18,44 @@
             import { AudioSequencer } from './jsm/audio/AudioSequencer.js'; 
             import { AudioSequence } from './jsm/audio/AudioSequence.js'; 
             import { AudioFX } from './jsm/audio/AudioFX.js'; 
+            import { AudioPlayer } from './jsm/audio/AudioPlayer.js'; 
 
             const listener = new THREE.AudioListener();
 
-            // SEQUENCES
+            // CREATE AUDIO OBJECTS
+
+            const oscGeneratorFund = 432;
+
+            const oscBuffer = new AudioBuffer( listener );
+            oscBuffer.createBuffer( 1 , 1 );
+            oscBuffer.sine( 1 , 1 ).add( 0 );
+
+            const oscGen = new AudioGenerator( listener );
+            oscGen.playbackRate = oscGeneratorFund;
+            oscGen.loop = true;
+            oscGen.setGain( 0 );
+            oscGen.start( 0 , oscBuffer.buffer );
+
+            const envBuffer1 = new AudioBuffer( listener );
+            envBuffer1.createBuffer( 1 , 1 );
+            envBuffer1.ramp( 0 , 1 , 0.01 , 0.015 , 0.1 , 4 ).add( 0 );
+
+            const envBuffer2 = new AudioBuffer( listener );
+            envBuffer2.createBuffer( 1 , 1 );
+            envBuffer2.ramp( 0, 1 , 0.5 , 0.5 , 1 , 1 ).add( 0 );
+
+            const envGen = new AudioGenerator( listener );
+            envGen.playbackRate = 1;
+            envGen.setGain( 0.25 );
+            
+            // CONNECTIONS
+
+            envGen.connect( oscGen.output.gain );
+            oscGen.connect( listener.getInput() );
+
+            // CREATE INDIVIDUAL SEQUENCES
 
             const seqLength = 5;
-            const oscGeneratorFund = 432;
-            const envBuffer = [];
-            const envBuffer2 = [];
 
             let timeSeq = new AudioSequence();
             let pitchSeq = new AudioSequence();
@@ -41,22 +70,35 @@
             pitchSeq.randomSelect( seqLength , [ 1 , 9/8 , 5/4 , 4/3 , 3/2 , 5/3 , 2 ] );
             pitchSeq.multiply( oscGeneratorFund );
 
-            bufferSeq.randomSelect( seqLength , [ envBuffer , envBuffer2 ] );
+            bufferSeq.randomSelect( seqLength , [ envBuffer1.buffer , envBuffer2.buffer ] );
             
             durationSeq.randomFloats( seqLength , 1 , 2 );
 
             gainSeq.randomFloats( seqLength , 0.25 , 0.6 );
 
-            // SEQUENCE
+            // ADD SEQUENCES TO SEQUENCER
 
             const sequencer = new AudioSequencer();
             sequencer.addSequence( 0 , timeSeq.sequence );
-            sequencer.addSequence( 1 , pitchSeq.sequence );
-            sequencer.addSequence( 2 , bufferSeq.sequence );
-            sequencer.addSequence( 3 , durationSeq.sequence );
-            sequencer.addSequence( 4 , gainSeq.sequence );
+            // sequencer.addSequence( 1 , pitchSeq.sequence );
+            sequencer.addSequence( 1 , bufferSeq.sequence );
+            sequencer.addSequence( 2 , durationSeq.sequence );
+            sequencer.addSequence( 3 , gainSeq.sequence );
 
-            sequencer.outputSequence();
+            sequencer.collateSequence();
+
+            // CREATE PLAYER
+
+            const player = new AudioPlayer( listener );
+            player.addNode( envGen );
+
+            // PLAY SEQUENCE
+
+            for( let i = 0 ; i < sequencer.sequence.length ; i++ ){
+
+                player.play( [ sequencer.sequence[i] ] );
+
+            }
 
             // VISUAL STUFF
 
