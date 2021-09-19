@@ -278,6 +278,14 @@ class AudioSequence extends Object3D {
 
 	}
 
+	invert( ){
+
+		for(var i=0; i<this.sequence.length; i++) {
+			this.sequence[i] = 1 / this.sequence[i];
+		}
+		
+	}
+
 	lace( newSequence ) {
 
 		this.newSequence = newSequence;

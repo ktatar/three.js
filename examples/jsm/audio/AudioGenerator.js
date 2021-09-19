@@ -63,8 +63,8 @@ class AudioGenerator extends Object3D {
 
 	}
 
-	play( startTime , buffer , playbackRate , gain ){
-		
+	play( startTime , stopTime , buffer , playbackRate , gain ){
+
 		this.source = this.context.createBufferSource();
 		this.source.connect( this.getOutput() );
 
@@ -75,6 +75,7 @@ class AudioGenerator extends Object3D {
 		this.output.gain.setValueAtTime( gain , startTime );
 
 		this.source.start( startTime );
+		this.source.stop( stopTime );
 
 	}
 

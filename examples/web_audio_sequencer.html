@@ -34,7 +34,6 @@
             oscGen.playbackRate = oscGeneratorFund;
             oscGen.loop = true;
             oscGen.setGain( 0 );
-            oscGen.start( 0 , oscBuffer.buffer );
 
             const envBuffer1 = new AudioBuffer( listener );
             envBuffer1.createBuffer( 1 , 1 );
@@ -57,48 +56,77 @@
 
             const seqLength = 5;
 
-            let timeSeq = new AudioSequence();
-            let pitchSeq = new AudioSequence();
-            let bufferSeq = new AudioSequence();
-            let durationSeq = new AudioSequence();
-            let gainSeq = new AudioSequence();
+            // SEQUENCE 1
 
-            timeSeq.duplicates( seqLength , 1 );
-            timeSeq.sumSequence();
-            timeSeq.add(listener.context.currentTime);
+            let startTimeSeq1 = new AudioSequence();
+            let stopTimeSeq1 = new AudioSequence();
+            let playbackRateSeq1 = new AudioSequence();
+            let durationSeq1 = new AudioSequence();
+            let bufferSeq1 = new AudioSequence();
+            let gainSeq1 = new AudioSequence();
 
-            pitchSeq.randomSelect( seqLength , [ 1 , 9/8 , 5/4 , 4/3 , 3/2 , 5/3 , 2 ] );
-            pitchSeq.multiply( oscGeneratorFund );
+            startTimeSeq1.duplicates( seqLength , 1 );
+            startTimeSeq1.sumSequence();
+            startTimeSeq1.add( listener.context.currentTime );
 
-            bufferSeq.randomSelect( seqLength , [ envBuffer1.buffer , envBuffer2.buffer ] );
+            bufferSeq1.randomSelect( seqLength , [ envBuffer1.buffer , envBuffer2.buffer ] );
             
-            durationSeq.randomFloats( seqLength , 1 , 2 );
+            playbackRateSeq1.randomFloats( seqLength , 1 , 2 );
 
-            gainSeq.randomFloats( seqLength , 0.25 , 0.6 );
+            gainSeq1.randomFloats( seqLength , 0.25 , 0.6 );
+
+            durationSeq1.sequence = playbackRateSeq1.sequence.slice();
+            durationSeq1.invert();
+
+            stopTimeSeq1.sequence = startTimeSeq1.sequence.slice();
+            stopTimeSeq1.addSequence( durationSeq1.sequence );
+
+            // SEQUENCE 2
+
+            let bufferSeq2 = new AudioSequence();
+            let playbackRateSeq2 = new AudioSequence();
+            let gainSeq2 = new AudioSequence();
+
+            bufferSeq2.duplicates( seqLength , oscBuffer.buffer );
+
+            playbackRateSeq2.randomSelect( seqLength , [ 1 , 9/8 , 5/4 , 4/3 , 3/2 , 5/3 , 2 ] );
+            playbackRateSeq2.multiply( oscGeneratorFund );
+
+            gainSeq2.duplicates( seqLength , 0 );
 
             // ADD SEQUENCES TO SEQUENCER
 
             const sequencer = new AudioSequencer();
-            sequencer.addSequence( 0 , timeSeq.sequence );
-            // sequencer.addSequence( 1 , pitchSeq.sequence );
-            sequencer.addSequence( 1 , bufferSeq.sequence );
-            sequencer.addSequence( 2 , durationSeq.sequence );
-            sequencer.addSequence( 3 , gainSeq.sequence );
+            sequencer.addSequence( 0 , startTimeSeq1.sequence );
+            sequencer.addSequence( 1 , stopTimeSeq1.sequence );
+            sequencer.addSequence( 2 , bufferSeq1.sequence );
+            sequencer.addSequence( 3 , playbackRateSeq1.sequence );
+            sequencer.addSequence( 4 , gainSeq1.sequence );
 
             sequencer.collateSequence();
+
+            const sequencer2 = new AudioSequencer();
+            sequencer2.addSequence( 0 , startTimeSeq1.sequence );
+            sequencer2.addSequence( 1 , stopTimeSeq1.sequence );
+            sequencer2.addSequence( 2 , bufferSeq2.sequence );
+            sequencer2.addSequence( 3 , playbackRateSeq2.sequence );
+            sequencer2.addSequence( 4 , gainSeq2.sequence );
+
+            sequencer2.collateSequence();
 
             // CREATE PLAYER
 
             const player = new AudioPlayer( listener );
             player.addNode( envGen );
+            player.addNode( oscGen );
+
+            // SEQUENCE ARRAY
+
+            let sequenceArray = [ sequencer , sequencer2 ];
 
             // PLAY SEQUENCE
 
-            for( let i = 0 ; i < sequencer.sequence.length ; i++ ){
-
-                player.play( [ sequencer.sequence[i] ] );
-
-            }
+            player.play( sequenceArray );
 
             // VISUAL STUFF
 

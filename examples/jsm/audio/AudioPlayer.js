@@ -20,11 +20,21 @@ class AudioPlayer extends Object3D {
 
 	}
 
-	play( argumentArray ){
+	addParameter( parameter ){
+
+		this.parameterArray.push( parameter );
+
+	}
+
+	play( sequenceArray ){
 
 		for( let i = 0 ; i < this.nodeArray.length ; i++ ){
 
-			this.nodeArray[i].play( ...argumentArray[i] );
+			for( let j = 0 ; j < sequenceArray[i].sequence.length ; j++ ){
+
+				this.nodeArray[i].play( ...sequenceArray[i].sequence[j] );
+	
+			}
 
 		}
 
