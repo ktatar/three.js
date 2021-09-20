@@ -24,31 +24,78 @@
 
             // AUDIO
 
-                // create a single cycle of a sine wave
-                const buffer = new AudioBuffer( listener );
-                buffer.createBuffer( 1 , 1 );
-                buffer.sine( 1 , 1 ).fill( 0 );
+                // OCSILLATOR
 
-                // create an audio generator
-                const generator = new AudioGenerator( listener );
-                generator.loop = true;
-                generator.playbackRate = 1;
-                generator.connect( listener.getInput() );
+                    // create a single cycle of a sine wave
+                    const oscBuffer = new AudioBuffer( listener );
+                    oscBuffer.createBuffer( 1 , 1 );
+                    oscBuffer.sine( 1 , 1 ).fill( 0 );
 
-                // create a player for the generator
-                const player = new AudioPlayer( generator );
+                    // create an audio generator
+                    const oscGenerator = new AudioGenerator( listener );
+                    oscGenerator.loop = true;
 
-                // define a play method for the player
-                player.play = function( startTime , stopTime , buffer , playbackRate ){
+                    // create a player for the generator
+                    const oscPlayer = new AudioPlayer( oscGenerator );
 
-                    this.generator.playbackRate = playbackRate;
-                    this.generator.start( startTime , buffer );
-                    this.generator.stop( stopTime );
+                    // define a play method for the player
+                    oscPlayer.play = function( startTime , stopTime , buffer , playbackRate ){
 
-                }
+                        this.generator.playbackRate = playbackRate;
+                        this.generator.buffer = buffer;
+                        this.generator.start( startTime );
+                        this.generator.stop( stopTime );
 
-                player.play( 0 , 1 , buffer.buffer , 432 );
-                player.play( 1 , 2 , buffer.buffer , 432 * 2 );
+                    }
+                
+                // ENVELOPE
+
+                    // create a buffer for an amplitude envelope
+                    const envBuffer1 = new AudioBuffer( listener );
+                    envBuffer1.createBuffer( 1 , 1 );
+                    envBuffer1.ramp( 0 , 1 , 0.01 , 0.015 , 0.1 , 4 ).fill( 0 );
+
+                    // create another buffer for a different amplitude envelope
+                    const envBuffer2 = new AudioBuffer( listener );
+                    envBuffer2.createBuffer( 1 , 1 );
+                    envBuffer2.ramp( 0 , 1 , 0.5 , 0.5 , 1 , 1 ).fill( 0 );
+
+                    // create a generator to output amplitude envelopes
+                    const envGenerator = new AudioGenerator( listener );
+
+                    // create a player to play the envelope generator
+                    const envPlayer = new AudioPlayer( envGenerator );
+                    
+                    // define a play method for the envelope player
+                    envPlayer.play = function( startTime , stopTime , buffer , playbackRate ){
+
+                        this.generator.playbackRate = playbackRate;
+                        this.generator.buffer = buffer;
+                        this.generator.start( startTime );
+                        this.generator.stop( stopTime );
+
+                    }
+
+                    // create a gain node to which the envelope will be applied
+                    const envGain = listener.context.createGain();
+                    envGain.gain.value = 0;
+
+                // CONNECT NODES ( to be done in AudioSynth or AudioInstrument?)
+
+                    oscGenerator.connect( envGain ); envGenerator.connect( envGain.gain );
+                    envGain.connect( listener.getInput() );
+
+                // ADD PLAYERS TO INSTRUMENT
+
+                // PLAYBACK
+                
+                    // play the oscillator
+                    oscPlayer.play( 0 , 1 , oscBuffer.buffer , 432 );
+                    oscPlayer.play( 1 , 2 , oscBuffer.buffer , 432 * 2 );
+
+                    // play the envelope
+                    envPlayer.play( 0 , 1 , envBuffer1.buffer , 4 );
+                    envPlayer.play( 1 , 2 , envBuffer2.buffer , 1 );
 
             // VISUAL
 

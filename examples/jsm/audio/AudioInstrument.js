@@ -101,7 +101,7 @@ class AudioInstrument extends Object3D {
 
 		return this;
 
-	}cc 
+	}
 
 	getFilter() {
 
