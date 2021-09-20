@@ -14,6 +14,28 @@ class AudioInstrument extends Object3D {
 		this.gain = this.context.createGain();
 		this.gain.connect( listener.getInput() );
 
+		this.players = [];
+
+	}
+
+	addPlayer( player ){
+
+		this.players.push( player );
+
+	}
+
+	play( sequencer ){
+
+		for( let i = 0 ; i < 3 ; i++ ){
+
+			for( let j = 0 ; j < this.players.length ; j++ ){
+
+				this.players[j].play( ...sequencer[j][i] );
+
+			}
+
+		}
+
 	}
 
 	getOutput() {

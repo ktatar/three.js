@@ -87,15 +87,36 @@
 
                 // ADD PLAYERS TO INSTRUMENT
 
-                // PLAYBACK
-                
-                    // play the oscillator
-                    oscPlayer.play( 0 , 1 , oscBuffer.buffer , 432 );
-                    oscPlayer.play( 1 , 2 , oscBuffer.buffer , 432 * 2 );
+                    const instrument = new AudioInstrument( listener );
+                    instrument.addPlayer( oscPlayer );
+                    instrument.addPlayer( envPlayer );
 
-                    // play the envelope
-                    envPlayer.play( 0 , 1 , envBuffer1.buffer , 4 );
-                    envPlayer.play( 1 , 2 , envBuffer2.buffer , 1 );
+                // CREATE A SEQUENCER
+
+                    const sequencer = [ 
+
+                        [
+
+                            [ 0 , 1 , oscBuffer.buffer , 432 ],
+                            [ 1 , 2 , oscBuffer.buffer , 432 * 2 ],
+                            [ 2 , 3 , oscBuffer.buffer , 432 * 0.25 ]
+                            
+                        ],
+
+                        [
+
+                            [ 0 , 1 , envBuffer1.buffer , 4 ],
+                            [ 1 , 2 , envBuffer2.buffer , 1 ],
+                            [ 2 , 3 , envBuffer1.buffer , 2 ]
+
+                        ]
+
+                    ]
+
+                // PLAYBACK
+    
+                    // play the instrument
+                    instrument.play( sequencer );
 
             // VISUAL
 
@@ -116,6 +137,7 @@
                 function animate() {
                     
                     requestAnimationFrame( animate );
+
 
                     cube.rotation.x += 0.01;
                     cube.rotation.y += 0.01;
