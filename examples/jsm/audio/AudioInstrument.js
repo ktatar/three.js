@@ -18,12 +18,6 @@ class AudioInstrument extends Object3D {
 
 	getOutput() {
 
-		return this.gain;
-
-	}
-
-	getOutput() {
-
 		return this.output;
 
 	}
