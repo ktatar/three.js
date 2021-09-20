@@ -93,6 +93,30 @@
 
                 // CREATE A SEQUENCER
 
+                    const sequenceLength = 5;
+
+                    const startSequence = new AudioSequence();
+                    const stopSequence = new AudioSequence();
+                    const oscBufferSequence = new AudioSequence();
+                    const oscPlaybackRateSequence = new AudioSequence();
+                    const envBufferSequence = new AudioSequence();
+                    const envPlaybackRateSequence = new AudioSequence();
+
+                    startSequence.duplicates( sequenceLength , 1 );
+                    startSequence.sumSequence();
+
+                    stopSequence.randomFloats( sequenceLength , 0.25 , 1 );
+                    stopSequence.addSequence( startSequence.sequence );
+
+                    oscBufferSequence.duplicates( sequenceLength , oscBuffer.buffer );
+                    oscPlaybackRateSequence.randomMultiples( sequenceLength , 432 , [ 1 , 2 , 0.5 , 0.25 ]);
+
+                    envBufferSequence.randomSelect( sequenceLength , [ envBuffer1.buffer , envBuffer2.buffer ] );
+                    envPlaybackRateSequence.randomFloats( sequenceLength , 1 , 4 );
+
+                    const mySequencer = new AudioSequencer();
+
+
                     const sequencer = [ 
 
                         [

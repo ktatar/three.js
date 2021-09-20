@@ -141,7 +141,7 @@ class AudioSequence extends Object3D {
 		this.multArray = multArray;
 
 		for(var i=0; i<this.length; i++) {
-			this.sequence[i] = this.base*randomArrayValue(this.multArray);
+			this.sequence[i] = this.base * this.multArray[ Math.floor( Math.random() * this.multArray.length ) ];
 		}
 
 		return this.sequence;
