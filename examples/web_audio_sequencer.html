@@ -22,138 +22,60 @@
 
             const listener = new THREE.AudioListener();
 
-            // CREATE AUDIO OBJECTS
+            // AUDIO
 
-            const oscGeneratorFund = 432;
+                // create a single cycle of a sine wave
+                const buffer = new AudioBuffer( listener );
+                buffer.createBuffer( 1 , 1 );
+                buffer.sine( 1 , 1 ).fill( 0 );
 
-            const oscBuffer = new AudioBuffer( listener );
-            oscBuffer.createBuffer( 1 , 1 );
-            oscBuffer.sine( 1 , 1 ).add( 0 );
+                // create an audio generator
+                const generator = new AudioGenerator( listener );
+                generator.loop = true;
+                generator.playbackRate = 1;
+                generator.connect( listener.getInput() );
 
-            const oscGen = new AudioGenerator( listener );
-            oscGen.playbackRate = oscGeneratorFund;
-            oscGen.loop = true;
-            oscGen.setGain( 0 );
+                // create a player for the generator
+                const player = new AudioPlayer( generator );
 
-            const envBuffer1 = new AudioBuffer( listener );
-            envBuffer1.createBuffer( 1 , 1 );
-            envBuffer1.ramp( 0 , 1 , 0.01 , 0.015 , 0.1 , 4 ).add( 0 );
+                // define a play method for the player
+                player.play = function( startTime , stopTime , buffer , playbackRate ){
 
-            const envBuffer2 = new AudioBuffer( listener );
-            envBuffer2.createBuffer( 1 , 1 );
-            envBuffer2.ramp( 0, 1 , 0.5 , 0.5 , 1 , 1 ).add( 0 );
+                    this.generator.playbackRate = playbackRate;
+                    this.generator.start( startTime , buffer );
+                    this.generator.stop( stopTime );
 
-            const envGen = new AudioGenerator( listener );
-            envGen.playbackRate = 1;
-            envGen.setGain( 0.25 );
-            
-            // CONNECTIONS
+                }
 
-            envGen.connect( oscGen.output.gain );
-            oscGen.connect( listener.getInput() );
+                player.play( 0 , 1 , buffer.buffer , 432 );
+                player.play( 1 , 2 , buffer.buffer , 432 * 2 );
 
-            // CREATE INDIVIDUAL SEQUENCES
+            // VISUAL
 
-            const seqLength = 5;
-
-            // SEQUENCE 1
-
-            let startTimeSeq1 = new AudioSequence();
-            let stopTimeSeq1 = new AudioSequence();
-            let playbackRateSeq1 = new AudioSequence();
-            let durationSeq1 = new AudioSequence();
-            let bufferSeq1 = new AudioSequence();
-            let gainSeq1 = new AudioSequence();
-
-            startTimeSeq1.duplicates( seqLength , 1 );
-            startTimeSeq1.sumSequence();
-            startTimeSeq1.add( listener.context.currentTime );
-
-            bufferSeq1.randomSelect( seqLength , [ envBuffer1.buffer , envBuffer2.buffer ] );
-            
-            playbackRateSeq1.randomFloats( seqLength , 1 , 2 );
-
-            gainSeq1.randomFloats( seqLength , 0.25 , 0.6 );
-
-            durationSeq1.sequence = playbackRateSeq1.sequence.slice();
-            durationSeq1.invert();
-
-            stopTimeSeq1.sequence = startTimeSeq1.sequence.slice();
-            stopTimeSeq1.addSequence( durationSeq1.sequence );
-
-            // SEQUENCE 2
-
-            let bufferSeq2 = new AudioSequence();
-            let playbackRateSeq2 = new AudioSequence();
-            let gainSeq2 = new AudioSequence();
-
-            bufferSeq2.duplicates( seqLength , oscBuffer.buffer );
-
-            playbackRateSeq2.randomSelect( seqLength , [ 1 , 9/8 , 5/4 , 4/3 , 3/2 , 5/3 , 2 ] );
-            playbackRateSeq2.multiply( oscGeneratorFund );
-
-            gainSeq2.duplicates( seqLength , 0 );
-
-            // ADD SEQUENCES TO SEQUENCER
-
-            const sequencer = new AudioSequencer();
-            sequencer.addSequence( 0 , startTimeSeq1.sequence );
-            sequencer.addSequence( 1 , stopTimeSeq1.sequence );
-            sequencer.addSequence( 2 , bufferSeq1.sequence );
-            sequencer.addSequence( 3 , playbackRateSeq1.sequence );
-            sequencer.addSequence( 4 , gainSeq1.sequence );
-
-            sequencer.collateSequence();
-
-            const sequencer2 = new AudioSequencer();
-            sequencer2.addSequence( 0 , startTimeSeq1.sequence );
-            sequencer2.addSequence( 1 , stopTimeSeq1.sequence );
-            sequencer2.addSequence( 2 , bufferSeq2.sequence );
-            sequencer2.addSequence( 3 , playbackRateSeq2.sequence );
-            sequencer2.addSequence( 4 , gainSeq2.sequence );
-
-            sequencer2.collateSequence();
-
-            // CREATE PLAYER
-
-            const player = new AudioPlayer( listener );
-            player.addNode( envGen );
-            player.addNode( oscGen );
-
-            // SEQUENCE ARRAY
-
-            let sequenceArray = [ sequencer , sequencer2 ];
-
-            // PLAY SEQUENCE
-
-            player.play( sequenceArray );
-
-            // VISUAL STUFF
-
-            const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-            
-            const geometry = new THREE.BoxGeometry();
-            const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-            const cube = new THREE.Mesh( geometry, material );
-            scene.add( cube );
-
-            camera.position.z = 5;
-
-            const renderer = new THREE.WebGLRenderer();
-            renderer.setSize( window.innerWidth, window.innerHeight );
-            document.body.appendChild( renderer.domElement );
-            
-            function animate() {
+                const scene = new THREE.Scene();
+                const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
                 
-                requestAnimationFrame( animate );
+                const geometry = new THREE.BoxGeometry();
+                const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+                const cube = new THREE.Mesh( geometry, material );
+                scene.add( cube );
 
-                cube.rotation.x += 0.01;
-                cube.rotation.y += 0.01;
+                camera.position.z = 5;
 
-                renderer.render( scene, camera );
-            }
-            animate();
+                const renderer = new THREE.WebGLRenderer();
+                renderer.setSize( window.innerWidth, window.innerHeight );
+                document.body.appendChild( renderer.domElement );
+                
+                function animate() {
+                    
+                    requestAnimationFrame( animate );
+
+                    cube.rotation.x += 0.01;
+                    cube.rotation.y += 0.01;
+
+                    renderer.render( scene, camera );
+                }
+                animate();
 		
         </script>
 	</body>

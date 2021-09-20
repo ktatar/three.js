@@ -38,6 +38,22 @@ class AudioGenerator extends Object3D {
 
 	}
 
+	connect( destination ) {
+
+		this.output.connect( destination );
+
+		return this;
+
+	}
+
+	disconnect( destination ) {
+
+		destination ? this.output.disconnect( destination ) : this.output.disconnect();
+
+		return this;
+
+	}
+
 	start( startTime , buffer ) {
 
 		this._startedAt = this.context.currentTime + startTime;
@@ -60,22 +76,6 @@ class AudioGenerator extends Object3D {
 		this.source.stop( stopTime );
 
 		this.isPlaying = false;
-
-	}
-
-	connect( destination ) {
-
-		this.output.connect( destination );
-
-		return this;
-
-	}
-
-	disconnect( destination ) {
-
-		destination ? this.output.disconnect( destination ) : this.output.disconnect();
-
-		return this;
 
 	}
 
