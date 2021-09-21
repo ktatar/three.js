@@ -26,11 +26,11 @@ class AudioInstrument extends Object3D {
 
 	play( sequencer ){
 
-		for( let i = 0 ; i < 3 ; i++ ){
+		for( let i = 0 ; i < sequencer.length ; i++ ){
 
 			for( let j = 0 ; j < this.players.length ; j++ ){
 
-				this.players[j].play( ...sequencer[j][i] );
+				this.players[j].play( ...sequencer.masterSequence[j][i] );
 
 			}
 

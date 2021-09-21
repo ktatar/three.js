@@ -93,8 +93,9 @@
 
                 // CREATE A SEQUENCER
 
-                    const sequenceLength = 5;
+                    const sequenceLength = 15;
 
+                    // create sequences of individual parameter values
                     const startSequence = new AudioSequence();
                     const stopSequence = new AudioSequence();
                     const oscBufferSequence = new AudioSequence();
@@ -114,33 +115,19 @@
                     envBufferSequence.randomSelect( sequenceLength , [ envBuffer1.buffer , envBuffer2.buffer ] );
                     envPlaybackRateSequence.randomFloats( sequenceLength , 1 , 4 );
 
-                    const mySequencer = new AudioSequencer();
+                    const oscSequenceArray = [ startSequence.sequence , stopSequence.sequence , oscBufferSequence.sequence , oscPlaybackRateSequence.sequence ];
+                    const envSequenceArray = [ startSequence.sequence , stopSequence.sequence , envBufferSequence.sequence , envPlaybackRateSequence.sequence ];
 
+                    // create a sequencer to assemble the individual sequences
+                    const instrumentSequencer = new AudioSequencer();
 
-                    const sequencer = [ 
-
-                        [
-
-                            [ 0 , 1 , oscBuffer.buffer , 432 ],
-                            [ 1 , 2 , oscBuffer.buffer , 432 * 2 ],
-                            [ 2 , 3 , oscBuffer.buffer , 432 * 0.25 ]
-                            
-                        ],
-
-                        [
-
-                            [ 0 , 1 , envBuffer1.buffer , 4 ],
-                            [ 1 , 2 , envBuffer2.buffer , 1 ],
-                            [ 2 , 3 , envBuffer1.buffer , 2 ]
-
-                        ]
-
-                    ]
+                    instrumentSequencer.assembleSequence( oscSequenceArray );
+                    instrumentSequencer.assembleSequence( envSequenceArray );
 
                 // PLAYBACK
     
                     // play the instrument
-                    instrument.play( sequencer );
+                    instrument.play( instrumentSequencer );
 
             // VISUAL
 

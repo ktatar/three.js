@@ -7,7 +7,8 @@ class AudioSequencer extends Object3D {
 		super();
 
 		this.type = 'AudioSequencer';
-		this.sequence = [];
+		this.masterSequence = [];
+		this.length = 0;
 
 	}
 
@@ -17,53 +18,27 @@ class AudioSequencer extends Object3D {
 
 	}
 
-	outputSequence(){
+	assembleSequence( sequenceArray ){
 
-		const subLength = this.sequence[0].length;
-		let outputSequence = [];
+		const subLength = sequenceArray[0].length;
 
-		for( let i = 0 ; i < subLength ; i++ ){
+		this.length = subLength > this.length ? subLength : this.length;
 
-			for( let j = 0 ; j < this.sequence.length ; j++ ){
-
-				outputSequence[j] = this.sequence[j][i];
-
-			}
-
-			console.log( outputSequence );
-
-		}
-
-	}
-
-	collateSequence(){
-
-		const subLength = this.sequence[0].length;
 		let tempSequence = [];
 
-		for( let i = 0 ; i < subLength ; i++ ){
+		for( let i = 0 ; i < subLength ; i ++ ){
 
 			tempSequence[i] = [];
 
-			for( let j = 0 ; j < this.sequence.length ; j++ ){
+			for( let j = 0 ; j < sequenceArray.length ; j++ ){
 
-				tempSequence[i][j] = this.sequence[j][i];
+				tempSequence[i][j] = sequenceArray[j][i];
 
 			}
 
 		}
 
-		this.sequence = tempSequence;
-
-	}
-
-	playSequence( instrument , timeValueArray ){
-
-		for( let i = 0 ; i < timeValueArray.length ; i++ ){
-
-			instrument.start(  )
-
-		}
+		this.masterSequence.push( tempSequence );
 
 	}
 
