@@ -15,7 +15,7 @@ class AudioGain extends Object3D {
 
 	}
 
-    set Gain( value ){
+    set gain( value ){
 
         this.gain.gain.value = value;
 

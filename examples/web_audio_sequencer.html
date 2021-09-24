@@ -18,7 +18,7 @@
             import { AudioSequencer } from './jsm/audio/AudioSequencer.js'; 
             import { AudioSequence } from './jsm/audio/AudioSequence.js'; 
             import { AudioFX } from './jsm/audio/AudioFX.js'; 
-            import { AudioPlayer } from './jsm/audio/AudioPlayer.js'; 
+            import { AudioNodePlayer } from './jsm/audio/AudioNodePlayer.js'; 
 
             const listener = new THREE.AudioListener();
 
@@ -36,15 +36,15 @@
                     oscGenerator.loop = true;
 
                     // create a player for the generator
-                    const oscPlayer = new AudioPlayer( oscGenerator );
+                    const oscPlayer = new AudioNodePlayer( oscGenerator );
 
                     // define a play method for the player
                     oscPlayer.play = function( startTime , stopTime , buffer , playbackRate ){
 
-                        this.generator.playbackRate = playbackRate;
-                        this.generator.buffer = buffer;
-                        this.generator.start( startTime );
-                        this.generator.stop( stopTime );
+                        this.node.playbackRate = playbackRate;
+                        this.node.buffer = buffer;
+                        this.node.start( startTime );
+                        this.node.stop( stopTime );
 
                     }
                 
@@ -64,15 +64,15 @@
                     const envGenerator = new AudioGenerator( listener );
 
                     // create a player to play the envelope generator
-                    const envPlayer = new AudioPlayer( envGenerator );
+                    const envPlayer = new AudioNodePlayer( envGenerator );
                     
                     // define a play method for the envelope player
                     envPlayer.play = function( startTime , stopTime , buffer , playbackRate ){
 
-                        this.generator.playbackRate = playbackRate;
-                        this.generator.buffer = buffer;
-                        this.generator.start( startTime );
-                        this.generator.stop( stopTime );
+                        this.node.playbackRate = playbackRate;
+                        this.node.buffer = buffer;
+                        this.node.start( startTime );
+                        this.node.stop( stopTime );
 
                     }
 
