@@ -384,6 +384,32 @@ class AudioBuffer extends Object3D {
 
 	}
 
+	normalize( min , max ){
+
+		this.min = min;
+		this.max = max;
+		this.range = this.max-this.min;
+		this.offset = this.min;
+		this.bufferArray;
+		this.bAMax;
+		this.bAMin;
+		this.normVal;
+
+		for( var i = 0 ; i < this.buffer.numberOfChannels ; i++ ){
+
+			this.bufferArray = this.buffer.getChannelData(i);
+			this.bAMax = Math.max( ...this.bufferArray) ;
+			this.bAMin = Math.min( ...this.bufferArray );
+
+			for(var j=0; j<this.buffer.length; j++){
+				this.normVal = ( this.bufferArray[j]-this.bAMin ) / ( this.bAMax-this.bAMin );
+				this.bufferArray[j] = ( this.range * this.normVal ) + this.offset;
+			}
+
+		}
+
+	}
+
 }
 
 export { AudioBuffer };
