@@ -368,7 +368,7 @@ class AudioBuffer extends Object3D {
    
 	}
 
-	buffer( buffer ){
+	bufferShape( buffer ){
 
 		this.bufferArray = buffer.getChannelData( 0 );
 

@@ -64,6 +64,36 @@ class SynthPresets extends Object3D {
 
 	}
 
+	p9_waveshapedFilteredImpulseBass(){
+
+		this.preset = new Preset9_WaveshapedFilteredImpulseBass( this );
+
+	}
+
+	p10_waveshapedFilteredImpulseMallet(){
+
+		this.preset = new Preset10_WaveshapedFilteredImpulseMallet( this );
+
+	}
+
+	p11_waveshaperPercussion(){
+
+		this.preset = new Preset11_WaveshaperPercussion( this );
+
+	}
+
+	p12_convolverSweep(){
+
+		this.preset = new Preset12_ConvolverSweep( this );
+
+	}
+
+	p13_fxSweep(){
+
+		this.preset = new Preset13_FXSweep( this );
+
+	}
+
 	start(){
 
 		this.preset.start();
@@ -434,8 +464,8 @@ class Preset8_FilteredImpulse{
 		// SYNTH BUFFER
 
 			this.synthBuffer = new AudioBuffer( this.listener );
-			this.synthBuffer.createBuffer( 1 , 0.25 );
-			this.synthBuffer.ramp( 0 , 1 , 0.01 , 0.015 , 0.1 , 4 ).fill( 0 );
+			this.synthBuffer.createBuffer( 1 , 1 );
+			this.synthBuffer.inverseSawtooth( 8 ).fill( 0 );
 
 		// SYNTH GENERATOR
 
@@ -452,7 +482,7 @@ class Preset8_FilteredImpulse{
 		// OUTPUT GAIN
 
 			this.output = this.context.createGain();
-			this.output.gain.value = 0.125;
+			this.output.gain.value = 16;
 
 		// CONNECTIONS
 
@@ -465,6 +495,420 @@ class Preset8_FilteredImpulse{
 	start(){
 
 		this.synthGenerator.start();
+
+	}
+
+}
+
+class Preset9_WaveshapedFilteredImpulseBass{
+
+	constructor( synthPresets ){
+
+		this.listener = synthPresets.listener;
+		this.context = synthPresets.context;
+
+		// GLOBAL VARIABLES
+
+			const fund = 432 * 0.125 ;
+
+		// SYNTH BUFFER
+
+			this.synthBuffer = new AudioBuffer( this.listener );
+			this.synthBuffer.createBuffer( 1 , 1 );
+			this.synthBuffer.inverseSawtooth( 16 ).fill( 0 );
+
+		// SYNTH GENERATOR
+
+			this.synthGenerator = new AudioGenerator( this.listener );
+			this.synthGenerator.buffer = this.synthBuffer.buffer;
+			this.synthGenerator.playbackRate = 1;
+
+		// WAVESHAPER BUFFER
+
+			this.waveShaperBuffer = new AudioBuffer( this.listener );
+			this.waveShaperBuffer.createBuffer( 1 , 1 );
+			this.waveShaperBuffer.fm( fund * 2 , fund * 4 , 0.01 ).fill( 0 );
+
+		// FX
+		
+			this.fx = new AudioFX( this.listener );
+			this.fx.filter( 'bandpass' , fund , 20 , 1 ).waveShaper( this.waveShaperBuffer.buffer );
+			this.fx.init();
+
+		// OUTPUT GAIN
+
+			this.output = this.context.createGain();
+			this.output.gain.value = 0.25;
+
+		// CONNECTIONS
+
+			this.synthGenerator.connect( this.fx );
+			this.fx.connect( this.output );
+			this.output.connect( this.listener.getInput() );
+
+	}
+
+	start(){
+
+		this.synthGenerator.start();
+
+	}
+
+}
+
+class Preset10_WaveshapedFilteredImpulseMallet{
+
+	constructor( synthPresets ){
+
+		this.listener = synthPresets.listener;
+		this.context = synthPresets.context;
+
+		// GLOBAL VARIABLES
+
+			const fund = 432 * 0.5;
+
+		// SYNTH BUFFER
+
+			this.synthBuffer = new AudioBuffer( this.listener );
+			this.synthBuffer.createBuffer( 1 , 1 );
+			this.synthBuffer.inverseSawtooth( 4 ).fill( 0 );
+
+		// SYNTH GENERATOR
+
+			this.synthGenerator = new AudioGenerator( this.listener );
+			this.synthGenerator.buffer = this.synthBuffer.buffer;
+			this.synthGenerator.playbackRate = 1;
+
+		// WAVESHAPER BUFFER
+
+			this.waveShaperBuffer = new AudioBuffer( this.listener );
+			this.waveShaperBuffer.createBuffer( 1 , 1 );
+			this.waveShaperBuffer.fm( fund * 0.125 , fund * 0.25 , 0.01 ).fill( 0 );
+
+		// FX
+		
+			this.fx = new AudioFX( this.listener );
+			this.fx.filter( 'bandpass' , fund , 20 , 1 ).waveShaper( this.waveShaperBuffer.buffer );
+			this.fx.init();
+
+		// OUTPUT GAIN
+
+			this.output = this.context.createGain();
+			this.output.gain.value = 0.25;
+
+		// CONNECTIONS
+
+			this.synthGenerator.connect( this.fx );
+			this.fx.connect( this.output );
+			this.output.connect( this.listener.getInput() );
+
+	}
+
+	start(){
+
+		this.synthGenerator.start();
+
+	}
+
+}
+
+class Preset11_WaveshaperPercussion{
+
+	constructor( synthPresets ){
+
+		this.listener = synthPresets.listener;
+		this.context = synthPresets.context;
+
+		// GLOBAL VARIABLES
+
+			const fund = 432 * 0.5;
+
+		// SYNTH BUFFER
+
+			this.synthBuffer = new AudioBuffer( this.listener );
+			this.synthBuffer.createBuffer( 1 , 1 );
+			this.synthBuffer.inverseSawtooth( 4 ).fill( 0 );
+
+		// SYNTH GENERATOR
+
+			this.synthGenerator = new AudioGenerator( this.listener );
+			this.synthGenerator.buffer = this.synthBuffer.buffer;
+			this.synthGenerator.playbackRate = 1;
+
+		// WAVESHAPER BUFFER
+
+			this.waveShaperBuffer = new AudioBuffer( this.listener );
+			this.waveShaperBuffer.createBuffer( 1 , 1 );
+			this.waveShaperBuffer.fm( fund * 0.123 , fund * 0.266 , 0.001 ).fill( 0 );
+
+		// FX
+		
+			this.fx = new AudioFX( this.listener );
+			this.fx.filter( 'bandpass' , fund , 5 , 1 ).waveShaper( this.waveShaperBuffer.buffer ).filter( 'highpass' , 10 , 1 , 1 ).filter( 'lowpass' , 2000 , 1 , 1 );
+			this.fx.init();
+
+		// OUTPUT GAIN
+
+			this.output = this.context.createGain();
+			this.output.gain.value = 0.5;
+
+		// CONNECTIONS
+
+			this.synthGenerator.connect( this.fx );
+			this.fx.connect( this.output );
+			this.output.connect( this.listener.getInput() );
+
+	}
+
+	start(){
+
+		this.synthGenerator.start();
+
+	}
+
+}
+
+class Preset12_ConvolverSweep{
+
+	constructor( synthPresets ){
+
+		this.listener = synthPresets.listener;
+		this.context = synthPresets.context;
+
+		// VARIABLES
+
+			const fund = 432 * 1;
+			const octaveArray = [ 1 , 2 , 4 ];
+			const intervalArray = [ 1 , 9/8 , 5/4 , 4/3 , 5/3 ];
+			let frequency = 0;
+			let peak = 0;
+			const nHarmonics = 10;
+
+		// BUFFERS
+
+			// noise buffer
+
+				this.noiseBuffer = new AudioBuffer( this.listener );
+				this.noiseBuffer.createBuffer( 1 , 1 );
+				this.noiseBuffer.noise().fill( 0 );
+
+			// sweep buffer
+
+				this.sweepBuffer = new AudioBuffer( this.listener );
+				this.sweepBuffer.createBuffer( 1 , 1 );
+				this.sweepBuffer.ramp( 0 , 1 , 0.01 , 0.15 , 0.1 , 4 ).fill( 0 );
+				this.sweepBuffer.constant( fund ).multiply( 0 );
+
+			// convolver buffer
+
+				this.convolverBuffer = new AudioBuffer( this.listener );
+				this.convolverBuffer.createBuffer( 1 , 2 );
+
+				this.convolverTemporaryBuffer = new AudioBuffer( this.listener );
+				this.convolverTemporaryBuffer.createBuffer( 1 , 2 );
+
+				for( let i = 0 ; i < nHarmonics ; i++ ){
+
+					frequency = fund * octaveArray[ Math.floor( Math.random() * octaveArray.length ) ] * intervalArray[ Math.floor( Math.random() * intervalArray.length ) ];
+					peak = 0.1 + Math.random() * 0.8;
+
+					this.convolverTemporaryBuffer.fm( frequency , frequency * 2 , 4 ).fill( 0 );
+					this.convolverTemporaryBuffer.constant( 1 / nHarmonics ).multiply( 0 );
+					this.convolverTemporaryBuffer.ramp( 0 , 1 , peak , peak , 1 , 1 ).multiply( 0 );
+					
+					this.convolverBuffer.bufferShape( this.convolverTemporaryBuffer.buffer ).add( 0 );
+
+				}
+				
+				this.convolverBuffer.ramp( 0 , 1 , 0.5 , 0.5 , 1 , 1 ).multiply( 0 );
+
+			// reverb buffer
+
+				this.reverbBuffer = new AudioBuffer( this.listener );
+				this.reverbBuffer.createBuffer( 2 , 3 );
+				this.reverbBuffer.noise().fill( 0 );
+				this.reverbBuffer.noise().fill( 1 );
+				this.reverbBuffer.ramp( 0 , 1 , 0.01 , 0.015 , 0.1 , 4 ).multiply( 0 );
+				this.reverbBuffer.ramp( 0 , 1 , 0.01 , 0.015 , 0.1 , 4 ).multiply( 1 );
+
+		// GENERATORS
+
+			// noise generator
+
+				this.noiseGenerator = new AudioGenerator( this.listener );
+				this.noiseGenerator.buffer = this.noiseBuffer.buffer;
+				this.noiseGenerator.playbackRate = 0.4;
+				this.noiseGenerator.loop = true;
+
+			// sweep generator
+
+				this.sweepGenerator = new AudioGenerator( this.listener );
+				this.sweepGenerator.buffer = this.sweepBuffer.buffer;
+				this.sweepGenerator.playbackRate = 0.25;
+
+		// FX
+		
+				// filter - convolver
+
+				this.filter_convolver = new AudioFX( this.listener );
+				this.filter_convolver.filter( 'bandpass' , 1 , 40 , 1 ).convolver( this.convolverBuffer.buffer );
+				this.filter_convolver.init();
+
+				// reverb
+
+				this.reverb = new AudioFX( this.listener );
+				this.reverb.convolver( this.reverbBuffer.buffer );
+				this.reverb.init();
+
+				this.reverb.output.gain.value = 2;
+
+		// OUTPUT GAIN
+
+			this.output = this.context.createGain();
+			this.output.gain.value = 10;
+
+		// CONNECTIONS
+
+			this.noiseGenerator.connect( this.filter_convolver ); this.sweepGenerator.connect( this.filter_convolver.fx[0].frequency );
+			
+			this.filter_convolver.connect( this.reverb );
+
+			this.filter_convolver.connect( this.output );
+			this.reverb.connect( this.output );
+
+			this.output.connect( this.listener.getInput() );
+
+	}
+
+	start(){
+
+		this.noiseGenerator.start();
+		this.sweepGenerator.start();
+
+	}
+
+}
+
+class Preset13_FXSweep{
+
+	constructor( synthPresets ){
+
+		this.listener = synthPresets.listener;
+		this.context = synthPresets.context;
+
+		// NOTE: this preset is exactly the same as Preset12_ConvolverSweep,
+		// with the exception of a couple changed values, commented below
+
+		// VARIABLES
+
+			const fund = 432 * 2;
+			const octaveArray = [ 1 , 2 , 4 ];
+			const intervalArray = [ 1 , 9/8 , 5/4 , 4/3 , 5/3 ];
+			let frequency = 0;
+			let peak = 0;
+			const nHarmonics = 10;
+
+		// BUFFERS
+
+			// noise buffer
+
+				this.noiseBuffer = new AudioBuffer( this.listener );
+				this.noiseBuffer.createBuffer( 1 , 1 );
+				this.noiseBuffer.noise().fill( 0 );
+
+			// sweep buffer
+
+				this.sweepBuffer = new AudioBuffer( this.listener );
+				this.sweepBuffer.createBuffer( 1 , 1 );
+				this.sweepBuffer.ramp( 0 , 1 , 0.01 , 0.15 , 0.1 , 4 ).fill( 0 );
+				this.sweepBuffer.constant( fund ).multiply( 0 );
+
+			// convolver buffer
+
+				this.convolverBuffer = new AudioBuffer( this.listener );
+				this.convolverBuffer.createBuffer( 1 , 2 );
+
+				this.convolverTemporaryBuffer = new AudioBuffer( this.listener );
+				this.convolverTemporaryBuffer.createBuffer( 1 , 2 );
+
+				for( let i = 0 ; i < nHarmonics ; i++ ){
+
+					frequency = fund * octaveArray[ Math.floor( Math.random() * octaveArray.length ) ] * intervalArray[ Math.floor( Math.random() * intervalArray.length ) ];
+					peak = 0.1 + Math.random() * 0.8;
+
+					/* CHANGED VALUES HERE ( arguments to fm method of this.convolverTemporaryBuffer ) */
+					this.convolverTemporaryBuffer.fm( frequency * 1.1 , frequency * 2.14 , 10 ).fill( 0 );
+					this.convolverTemporaryBuffer.constant( 1 / nHarmonics ).multiply( 0 );
+					this.convolverTemporaryBuffer.ramp( 0 , 1 , peak , peak , 1 , 1 ).multiply( 0 );
+					
+					this.convolverBuffer.bufferShape( this.convolverTemporaryBuffer.buffer ).add( 0 );
+
+				}
+				
+				this.convolverBuffer.ramp( 0 , 1 , 0.5 , 0.5 , 1 , 1 ).multiply( 0 );
+
+			// reverb buffer
+
+				this.reverbBuffer = new AudioBuffer( this.listener );
+				this.reverbBuffer.createBuffer( 2 , 3 );
+				this.reverbBuffer.noise().fill( 0 );
+				this.reverbBuffer.noise().fill( 1 );
+				this.reverbBuffer.ramp( 0 , 1 , 0.01 , 0.015 , 0.1 , 4 ).multiply( 0 );
+				this.reverbBuffer.ramp( 0 , 1 , 0.01 , 0.015 , 0.1 , 4 ).multiply( 1 );
+
+		// GENERATORS
+
+			// noise generator
+
+				this.noiseGenerator = new AudioGenerator( this.listener );
+				this.noiseGenerator.buffer = this.noiseBuffer.buffer;
+				this.noiseGenerator.playbackRate = 0.4;
+				this.noiseGenerator.loop = true;
+
+			// sweep generator
+
+				this.sweepGenerator = new AudioGenerator( this.listener );
+				this.sweepGenerator.buffer = this.sweepBuffer.buffer;
+				this.sweepGenerator.playbackRate = 0.25;
+
+		// FX
+		
+				// filter - convolver
+
+				this.filter_convolver = new AudioFX( this.listener );
+				this.filter_convolver.filter( 'bandpass' , 1 , 40 , 1 ).convolver( this.convolverBuffer.buffer );
+				this.filter_convolver.init();
+
+				// reverb
+
+				this.reverb = new AudioFX( this.listener );
+				this.reverb.convolver( this.reverbBuffer.buffer );
+				this.reverb.init();
+
+				this.reverb.output.gain.value = 2;
+
+		// OUTPUT GAIN
+
+			this.output = this.context.createGain();
+			this.output.gain.value = 10;
+
+		// CONNECTIONS
+
+			this.noiseGenerator.connect( this.filter_convolver ); this.sweepGenerator.connect( this.filter_convolver.fx[0].frequency );
+			
+			this.filter_convolver.connect( this.reverb );
+
+			this.filter_convolver.connect( this.output );
+			this.reverb.connect( this.output );
+
+			this.output.connect( this.listener.getInput() );
+
+	}
+
+	start(){
+
+		this.noiseGenerator.start();
+		this.sweepGenerator.start();
 
 	}
 
