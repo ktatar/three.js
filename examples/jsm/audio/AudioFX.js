@@ -131,7 +131,16 @@ class AudioFX extends Object3D {
 
 	connect( destination ) {
 
-		this.output.connect( destination );
+		if( destination.input ){
+
+			this.output.connect( destination.input );
+
+		}
+		else{
+
+			this.output.connect( destination );
+
+		}
 
 		return this;
 

@@ -12,9 +12,6 @@
 		<script type="module">
 
 			import * as THREE from '../../build/three.module.js';
-            import { AudioFX } from './jsm/audio/AudioFX.js'; 
-            import { AudioNodePlayer } from './jsm/audio/AudioNodePlayer.js'; 
-            import { AudioInstrument } from './jsm/audio/AudioInstrument.js'; 
             import { SynthPresets } from './jsm/audio/SynthPresets.js'; 
 
             const listener = new THREE.AudioListener();
@@ -22,7 +19,7 @@
             // AUDIO
 
                 const synthPreset = new SynthPresets( listener );
-                synthPreset.p4_amBuffer();
+                synthPreset.p8_filteredImpulse();
                 synthPreset.start();
 
             // VISUAL
