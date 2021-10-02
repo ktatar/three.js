@@ -57,9 +57,6 @@ class SynthPresets extends Object3D {
 		this.preset = new Preset7_NoiseHit( this );
 
 	}
-
-<<<<<<< HEAD
-=======
 	p8_filteredImpulse(){
 
 		this.preset = new Preset8_FilteredImpulse( this );
@@ -96,7 +93,6 @@ class SynthPresets extends Object3D {
 
 	}
 
->>>>>>> 02102968747fc9266fc55133b868e48d55d628d9
 	start(){
 
 		this.preset.start();
@@ -456,8 +452,6 @@ class Preset7_NoiseHit{
 	}
 
 }
-<<<<<<< HEAD
-=======
 
 class Preset8_FilteredImpulse{
 
@@ -756,7 +750,7 @@ class Preset12_ConvolverSweep{
 				// filter - convolver
 
 				this.filter_convolver = new AudioFX( this.listener );
-				this.filter_convolver.filter( 'bandpass' , 1 , 40 , 1 ).convolver( this.convolverBuffer.buffer );
+				this.filter_convolver.filter( 'bandpass' , 1 , 40 , 1 ).convolver( this.convolverBuffer.buffer ).filter( 'peaking' , fund , 1 , -6 );
 				this.filter_convolver.init();
 
 				// reverb
@@ -918,6 +912,5 @@ class Preset13_FXSweep{
 	}
 
 }
->>>>>>> 02102968747fc9266fc55133b868e48d55d628d9
   
 export { SynthPresets };
