@@ -795,8 +795,10 @@ class Preset13_FXSweep{
 		this.listener = synthPresets.listener;
 		this.context = synthPresets.context;
 
-		// NOTE: this preset is exactly the same as Preset12_ConvolverSweep,
-		// with the exception of a couple changed values, commented below
+		/*
+			NOTE: this preset is exactly the same as Preset12_ConvolverSweep,
+			with the exception of a couple changed values, commented below
+		*/
 
 		// VARIABLES
 
