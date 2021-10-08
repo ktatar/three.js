@@ -57,6 +57,7 @@ class SynthPresets extends Object3D {
 		this.preset = new Preset7_NoiseHit( this );
 
 	}
+
 	p8_filteredImpulse(){
 
 		this.preset = new Preset8_FilteredImpulse( this );
@@ -90,6 +91,36 @@ class SynthPresets extends Object3D {
 	p13_fxSweep(){
 
 		this.preset = new Preset13_FXSweep( this );
+
+	}
+
+	p14_simpleEnvelope(){
+
+		this.preset = new Preset14_SimpleEnvelope( this );
+
+	}
+
+	p15_tremoloEnvelope(){
+
+		this.preset = new Preset15_TremoloEnvelope( this );
+
+	}
+
+	p16_complexEnvelope(){
+
+		this.preset = new Preset16_ComplexEnvelope( this );
+
+	}
+
+	p17_evolvingEnvelope(){
+
+		this.preset = new Preset17_EvolvingEnvelope( this );
+
+	}
+
+	p18_sequenceBuffer(){
+
+		this.preset = new Preset18_SequenceBuffer( this );
 
 	}
 
@@ -910,6 +941,434 @@ class Preset13_FXSweep{
 
 		this.noiseGenerator.start();
 		this.sweepGenerator.start();
+
+	}
+
+}
+
+class Preset14_SimpleEnvelope{
+
+	constructor( synthPresets ){
+
+		this.listener = synthPresets.listener;
+		this.context = synthPresets.context;
+
+		this.output = this.context.createGain();
+		this.output.gain.value = 0.25;
+
+		// BUFFERS
+
+			// oscillator 
+
+				this.oscBuffer = new AudioBuffer( this.listener );
+				this.oscBuffer.createBuffer( 1 , 1 );
+				this.oscBuffer.sine( 1 , 1 ).fill( 0 );
+
+			// envelope
+
+				this.envBuffer = new AudioBuffer( this.listener );
+				this.envBuffer.createBuffer( 1 , 1 );
+				this.envBuffer.ramp( 0 , 1 , 0.01 , 0.015 , 0.1 , 4 ).fill( 0 );
+		
+		// GENERATORS
+
+			// oscillator
+
+				this.oscGenerator = new AudioGenerator( this.listener );
+				this.oscGenerator.buffer = this.oscBuffer.buffer;
+				this.oscGenerator.playbackRate = 432;
+				this.oscGenerator.loop = true;
+
+			// envelope 
+
+				this.envGenerator = new AudioGenerator( this.listener );
+				this.envGenerator.buffer = this.envBuffer.buffer;
+				this.envGenerator.playbackRate = 1;
+
+		// ENVELOPE GAIN
+
+			this.envelopeGain = this.context.createGain();
+			this.envelopeGain.gain.value = 0;
+
+		// CONNECTIONS
+
+			this.oscGenerator.connect( this.envelopeGain ); this.envGenerator.connect( this.envelopeGain.gain );
+			this.envelopeGain.connect( this.output );
+			this.output.connect( this.listener.getInput() );
+
+	}
+
+	start() {
+
+		this.oscGenerator.start();
+		this.envGenerator.start();
+
+	}
+
+}
+
+class Preset15_TremoloEnvelope{
+
+	constructor( synthPresets ){
+
+		this.listener = synthPresets.listener;
+		this.context = synthPresets.context;
+
+		this.output = this.context.createGain();
+		this.output.gain.value = 0.25;
+
+		// BUFFERS
+
+			// oscillator 
+
+				this.oscBuffer = new AudioBuffer( this.listener );
+				this.oscBuffer.createBuffer( 1 , 1 );
+				this.oscBuffer.sine( 1 , 1 ).fill( 0 );
+
+			// envelope
+
+				this.envBuffer = new AudioBuffer( this.listener );
+				this.envBuffer.createBuffer( 1 , 1 );
+				this.envBuffer.sine( 5 , 1 ).add( 0 );
+				this.envBuffer.ramp( 0 , 1 , 0.01 , 0.015 , 0.1 , 4 ).multiply( 0 );
+		
+		// GENERATORS
+
+			// oscillator
+
+				this.oscGenerator = new AudioGenerator( this.listener );
+				this.oscGenerator.buffer = this.oscBuffer.buffer;
+				this.oscGenerator.playbackRate = 432;
+				this.oscGenerator.loop = true;
+
+			// envelope 
+
+				this.envGenerator = new AudioGenerator( this.listener );
+				this.envGenerator.buffer = this.envBuffer.buffer;
+				this.envGenerator.playbackRate = 1;
+
+		// ENVELOPE GAIN
+
+			this.envelopeGain = this.context.createGain();
+			this.envelopeGain.gain.value = 0;
+
+		// CONNECTIONS
+
+			this.oscGenerator.connect( this.envelopeGain ); this.envGenerator.connect( this.envelopeGain.gain );
+			this.envelopeGain.connect( this.output );
+			this.output.connect( this.listener.getInput() );
+
+	}
+
+	start() {
+
+		this.oscGenerator.start();
+		this.envGenerator.start();
+
+	}
+
+}
+
+class Preset16_ComplexEnvelope{
+
+	constructor( synthPresets ){
+
+		this.listener = synthPresets.listener;
+		this.context = synthPresets.context;
+
+		this.output = this.context.createGain();
+		this.output.gain.value = 0.25;
+
+		// BUFFERS
+
+			// oscillator 
+
+				this.oscBuffer = new AudioBuffer( this.listener );
+				this.oscBuffer.createBuffer( 1 , 1 );
+				this.oscBuffer.sine( 1 , 1 ).fill( 0 );
+
+			// envelope
+
+				this.envBuffer = new AudioBuffer( this.listener );
+				this.envBuffer.createBuffer( 1 , 1 );
+				this.envBuffer.sine( 5 , 1 ).add( 0 );
+				this.envBuffer.am( 10 , 100 , 1 ).add( 0 );
+				this.envBuffer.fm( 432 * 0.25 , 432 * 0.5 , 432 ).add( 0 );
+				this.envBuffer.fm( 432 * 0.5 , 432 * 0.125 , 10 ).add( 0 );
+				this.envBuffer.fm( 10 , 20 , 10 ).add( 0 );
+				this.envBuffer.ramp( 0 , 1 , 0.01 , 0.015 , 0.1 , 4 ).multiply( 0 );
+		
+		// GENERATORS
+
+			// oscillator
+
+				this.oscGenerator = new AudioGenerator( this.listener );
+				this.oscGenerator.buffer = this.oscBuffer.buffer;
+				this.oscGenerator.playbackRate = 432;
+				this.oscGenerator.loop = true;
+
+			// envelope 
+
+				this.envGenerator = new AudioGenerator( this.listener );
+				this.envGenerator.buffer = this.envBuffer.buffer;
+				this.envGenerator.playbackRate = 1;
+
+		// ENVELOPE GAIN
+
+			this.envelopeGain = this.context.createGain();
+			this.envelopeGain.gain.value = 0;
+
+		// CONNECTIONS
+
+			this.oscGenerator.connect( this.envelopeGain ); this.envGenerator.connect( this.envelopeGain.gain );
+			this.envelopeGain.connect( this.output );
+			this.output.connect( this.listener.getInput() );
+
+	}
+
+	start() {
+
+		this.oscGenerator.start();
+		this.envGenerator.start();
+
+	}
+
+}
+
+class Preset17_EvolvingEnvelope{
+
+	constructor( synthPresets ){
+
+		this.listener = synthPresets.listener;
+		this.context = synthPresets.context;
+
+		this.output = this.context.createGain();
+		this.output.gain.value = 2;
+
+		// BUFFERS
+
+			// oscillator 
+
+				this.oscBuffer = new AudioBuffer( this.listener );
+				this.oscBuffer.createBuffer( 1 , 3 );
+				this.oscBuffer.sine( 1 , 1 ).fill( 0 );
+
+			// envelope
+
+				this.envBuffer = new AudioBuffer( this.listener );
+				this.envBuffer.createBuffer( 1 , 3 );
+
+				this.tempBuffer = new AudioBuffer( this.listener );
+				this.tempBuffer.createBuffer( 1 , 3 );
+
+				let r = 0;
+				let p = 0;
+				let f = 0;
+				let nEnvelopes = 20;
+
+				for( let i = 0 ; i < nEnvelopes ; i++ ){
+
+					r = Math.floor(Math.random() * 3);
+					p = Math.random();
+					f = 100 + Math.floor( Math.random() * 432 );
+
+					if( r === 0 ){
+
+						this.tempBuffer.am( f , f * ( 1 + Math.random() ) , 1 ).fill( 0 );
+						this.tempBuffer.ramp( 0 , 1 , p , p , 1 , 1 ).multiply( 0 );
+						this.tempBuffer.constant( 0.25 ).multiply( 0 );
+
+					}
+					else if( r === 1 ){
+
+						this.tempBuffer.fm( f , f * ( 1 + Math.random() ) ,  ( f * Math.random() ) / 200 ).fill( 0 );
+						this.tempBuffer.ramp( 0 , 1 , p , p , 1 , 1 ).multiply( 0 );
+						this.tempBuffer.constant( 0.25 ).multiply( 0 );
+
+					}
+					else if( r === 2 ){
+
+						this.tempBuffer.sine( f , 1 ).fill( 0 );
+						this.tempBuffer.ramp( 0 , 1 , 0.01 , 0.015 , 0.1 , 4 ).multiply( 0 );
+
+					}
+
+					this.envBuffer.bufferShape( this.tempBuffer.buffer ).add( 0 );
+
+				}
+
+				this.envBuffer.constant( 1 / nEnvelopes ).multiply( 0 );
+
+		
+		// GENERATORS
+
+			// oscillator
+
+				this.oscGenerator = new AudioGenerator( this.listener );
+				this.oscGenerator.buffer = this.oscBuffer.buffer;
+				this.oscGenerator.playbackRate = 432 * 16 ;
+				this.oscGenerator.loop = true;
+
+			// envelope 
+
+				this.envGenerator = new AudioGenerator( this.listener );
+				this.envGenerator.buffer = this.envBuffer.buffer;
+				this.envGenerator.playbackRate = 1;
+
+		// REVERB
+
+			this.reverbBuffer = new AudioBuffer( this.listener );
+			this.reverbBuffer.createBuffer( 2 , 1 );
+			this.reverbBuffer.noise().fill( 0 );
+			this.reverbBuffer.noise().fill( 1 );
+			this.reverbBuffer.ramp( 0 , 1 , 0.01 , 0.015 , 0.1 , 3 ).multiply( 0 );
+			this.reverbBuffer.ramp( 0 , 1 , 0.01 , 0.015 , 0.1 , 3 ).multiply( 1 );
+
+			this.reverb = new AudioFX( this.listener );
+			this.reverb.convolver( this.reverbBuffer.buffer );
+			this.reverb.init();
+
+		// ENVELOPE GAIN
+
+			this.envelopeGain = this.context.createGain();
+			this.envelopeGain.gain.value = 0;
+
+		// CONNECTIONS
+
+			this.oscGenerator.connect( this.envelopeGain ); this.envGenerator.connect( this.envelopeGain.gain );
+			
+			this.envelopeGain.connect( this.reverb.input );
+			
+			this.envelopeGain.connect( this.output );
+			this.reverb.connect( this.output );
+			
+			this.output.connect( this.listener.getInput() );
+
+	}
+
+	start() {
+
+		this.oscGenerator.start();
+		this.envGenerator.start();
+
+	}
+
+}
+
+class Preset18_SequenceBuffer{
+
+	constructor( synthPresets ){
+
+		this.listener = synthPresets.listener;
+		this.context = synthPresets.context;
+
+		this.output = this.context.createGain();
+		this.output.gain.value = 0.5;
+
+		// BUFFERS
+
+			// sequence buffer
+
+				this.sequenceBuffer = new AudioBuffer( this.listener );
+				this.sequenceBuffer.createBuffer( 1 , 3 );
+
+				this.tempBuffer = new AudioBuffer( this.listener );
+				this.tempBuffer.createBuffer( 1 , 3 );
+
+				const fundamental = 432 * 4;
+				const numberOfNotes = 30;
+				const intervalArray = [ 1 , 9/8 , 5/4 , 4/3 , 5/3 ];
+				const octaveArray = [ 1 , 0.5 , 2 , 0.25 ];
+				let f = 0;
+				let r = 0;
+
+				for( let i = 0 ; i < numberOfNotes ; i++ ){
+
+					r = Math.floor( Math.random() * 3 );
+					f = fundamental * intervalArray[ Math.floor( Math.random() * intervalArray.length ) ] * octaveArray[ Math.floor( Math.random() * octaveArray.length ) ];
+
+					if( r === 0 ){
+
+						this.tempBuffer.sine( f , 1 ).fill( 0 );
+
+					}
+
+					if( r === 1 ){
+
+						this.tempBuffer.am( f , f * octaveArray[ Math.floor( Math.random() * octaveArray.length ) ] , 1 ).fill( 0 );
+						
+					}
+
+					if( r === 2 ){
+
+						this.tempBuffer.fm( f , f * octaveArray[ Math.floor( Math.random() * octaveArray.length ) ] , 1 ).fill( 0 );
+						
+					}
+
+					this.tempBuffer.ramp( i / numberOfNotes , ( i + 1 ) / numberOfNotes , 0.01 , 0.015 , 0.75 , 3 ).multiply( 0 );
+
+					this.sequenceBuffer.bufferShape( this.tempBuffer.buffer ).add( 0 );
+
+				}
+		
+		// GENERATORS
+
+			// sequence generator
+
+				this.sequenceGenerator = new AudioGenerator( this.listener );
+				this.sequenceGenerator.buffer = this.sequenceBuffer.buffer;
+				this.sequenceGenerator.playbackRate = 0.6 ;
+				this.sequenceGenerator.loop = true;
+
+		// REVERB
+
+			this.reverbBuffer = new AudioBuffer( this.listener );
+			this.reverbBuffer.createBuffer( 2 , 1 );
+			this.reverbBuffer.noise().fill( 0 );
+			this.reverbBuffer.noise().fill( 1 );
+			this.reverbBuffer.ramp( 0 , 1 , 0.01 , 0.015 , 0.1 , 3 ).multiply( 0 );
+			this.reverbBuffer.ramp( 0 , 1 , 0.01 , 0.015 , 0.1 , 3 ).multiply( 1 );
+
+			this.reverb = new AudioFX( this.listener );
+			this.reverb.convolver( this.reverbBuffer.buffer );
+			this.reverb.init();
+
+		// DELAY
+
+			this.delayLeft = new AudioFX( this.listener );
+			this.delayLeft.delay( 1 , 0.2 ).pan( -1 );
+			this.delayLeft.init();
+
+			this.delayRight = new AudioFX( this.listener );
+			this.delayRight.delay( 0.5 , 0.2 ).pan( 1 );
+			this.delayRight.init();
+
+			this.delayLeft.output.gain.value = 0.25;
+			this.delayRight.output.gain.value = 0.25;
+
+		// CONNECTIONS
+
+			this.sequenceGenerator.connect( this.output );
+
+			this.sequenceGenerator.connect( this.reverb )
+			this.reverb.connect( this.output );
+
+			this.sequenceGenerator.connect( this.delayLeft );
+			this.sequenceGenerator.connect( this.delayRight );
+			this.delayLeft.connect( this.output );
+			this.delayRight.connect( this.output );
+			
+			this.output.connect( this.listener.getInput() );
+
+	}
+
+	start() {
+
+		const now = this.context.currentTime;
+		const phraseLength = this.sequenceGenerator.buffer.duration / this.sequenceGenerator.playbackRate;
+
+		this.sequenceGenerator.start( now + 0 );
+		this.sequenceGenerator.stop( now + phraseLength * 4 );
 
 	}
 
