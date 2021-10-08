@@ -123,6 +123,12 @@ class SynthPresets extends Object3D {
 		this.preset = new Preset18_SequenceBuffer( this );
 
 	}
+	
+	p19_polyphonicSequenceBuffer(){
+
+		this.preset = new Preset19_PolyphonicSequenceBuffer( this );
+
+	}
 
 	start(){
 
@@ -1310,6 +1316,132 @@ class Preset18_SequenceBuffer{
 					this.sequenceBuffer.bufferShape( this.tempBuffer.buffer ).add( 0 );
 
 				}
+		
+		// GENERATORS
+
+			// sequence generator
+
+				this.sequenceGenerator = new AudioGenerator( this.listener );
+				this.sequenceGenerator.buffer = this.sequenceBuffer.buffer;
+				this.sequenceGenerator.playbackRate = 0.6 ;
+				this.sequenceGenerator.loop = true;
+
+		// REVERB
+
+			this.reverbBuffer = new AudioBuffer( this.listener );
+			this.reverbBuffer.createBuffer( 2 , 1 );
+			this.reverbBuffer.noise().fill( 0 );
+			this.reverbBuffer.noise().fill( 1 );
+			this.reverbBuffer.ramp( 0 , 1 , 0.01 , 0.015 , 0.1 , 3 ).multiply( 0 );
+			this.reverbBuffer.ramp( 0 , 1 , 0.01 , 0.015 , 0.1 , 3 ).multiply( 1 );
+
+			this.reverb = new AudioFX( this.listener );
+			this.reverb.convolver( this.reverbBuffer.buffer );
+			this.reverb.init();
+
+		// DELAY
+
+			this.delayLeft = new AudioFX( this.listener );
+			this.delayLeft.delay( 1 , 0.2 ).pan( -1 );
+			this.delayLeft.init();
+
+			this.delayRight = new AudioFX( this.listener );
+			this.delayRight.delay( 0.5 , 0.2 ).pan( 1 );
+			this.delayRight.init();
+
+			this.delayLeft.output.gain.value = 0.25;
+			this.delayRight.output.gain.value = 0.25;
+
+		// CONNECTIONS
+
+			this.sequenceGenerator.connect( this.output );
+
+			this.sequenceGenerator.connect( this.reverb )
+			this.reverb.connect( this.output );
+
+			this.sequenceGenerator.connect( this.delayLeft );
+			this.sequenceGenerator.connect( this.delayRight );
+			this.delayLeft.connect( this.output );
+			this.delayRight.connect( this.output );
+			
+			this.output.connect( this.listener.getInput() );
+
+	}
+
+	start() {
+
+		const now = this.context.currentTime;
+		const phraseLength = this.sequenceGenerator.buffer.duration / this.sequenceGenerator.playbackRate;
+
+		this.sequenceGenerator.start( now + 0 );
+		this.sequenceGenerator.stop( now + phraseLength * 4 );
+
+	}
+
+}
+
+class Preset19_PolyphonicSequenceBuffer{
+
+	constructor( synthPresets ){
+
+		this.listener = synthPresets.listener;
+		this.context = synthPresets.context;
+
+		this.output = this.context.createGain();
+		this.output.gain.value = 0.33;
+
+		// BUFFERS
+
+			// sequence buffer
+
+				this.sequenceBuffer = new AudioBuffer( this.listener );
+				this.sequenceBuffer.createBuffer( 1 , 3 );
+
+				this.tempBuffer = new AudioBuffer( this.listener );
+				this.tempBuffer.createBuffer( 1 , 3 );
+
+				const numberOfVoices = 3;
+				const fundamentalArray = [ 432 * 2 , 432 * 2 , 432 * 4];
+				const numberOfNotesArray = [ 3 , 30 , 15 ];
+				const intervalArray = [ 1 , 9/8 , 5/4 , 4/3 , 5/3 ];
+				const octaveArray = [ 1 , 0.5 , 2 , 0.25 ];
+				let f = 0;
+				let r = 0;
+
+				for( let k = 0 ; k < numberOfVoices ; k++ ){
+
+					for( let i = 0 ; i < numberOfNotesArray[ k ] ; i++ ){
+
+						r = Math.floor( Math.random() * 3 );
+						f = fundamentalArray[ k ] * intervalArray[ Math.floor( Math.random() * intervalArray.length ) ] * octaveArray[ Math.floor( Math.random() * octaveArray.length ) ];
+	
+						if( r === 0 ){
+	
+							this.tempBuffer.sine( f , 1 ).fill( 0 );
+	
+						}
+	
+						if( r === 1 ){
+	
+							this.tempBuffer.am( f , f * octaveArray[ Math.floor( Math.random() * octaveArray.length ) ] , 1 ).fill( 0 );
+							
+						}
+	
+						if( r === 2 ){
+	
+							this.tempBuffer.fm( f , f * octaveArray[ Math.floor( Math.random() * octaveArray.length ) ] , 1 ).fill( 0 );
+							
+						}
+	
+						this.tempBuffer.ramp( i / numberOfNotesArray[ k ] , ( i + 1 ) / numberOfNotesArray[ k ] , 0.01 , 0.015 , 0.75 , 3 ).multiply( 0 );
+	
+						this.sequenceBuffer.bufferShape( this.tempBuffer.buffer ).add( 0 );
+	
+					}
+
+				}
+
+
 		
 		// GENERATORS
 
