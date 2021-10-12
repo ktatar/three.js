@@ -130,6 +130,12 @@ class SynthPresets extends Object3D {
 
 	}
 
+	p20_percussionSequenceBuffer(){
+
+		this.preset = new Preset20_PercussionSequenceBuffer( this );
+
+	}
+
 	start(){
 
 		this.preset.start();
@@ -1505,5 +1511,89 @@ class Preset19_PolyphonicSequenceBuffer{
 	}
 
 }
-  
+ 
+class Preset20_PercussionSequenceBuffer{
+
+	constructor( synthPresets ){
+
+		this.listener = synthPresets.listener;
+		this.context = synthPresets.context;
+
+		this.output = this.context.createGain();
+		this.output.gain.value = 0.33;
+
+		// BUFFERS
+
+			// sequence buffer
+
+				this.sequenceBuffer = new AudioBuffer( this.listener );
+				this.sequenceBuffer.createBuffer( 1 , 3 );
+
+				this.tempBuffer = new AudioBuffer( this.listener );
+				this.tempBuffer.createBuffer( 1 , 3 );
+
+				const numberOfVoices = 3;
+				const numberOfNotesArray = [ 15 , 30 , 3 ];
+
+				for( let k = 0 ; k < numberOfVoices ; k++ ){
+
+					for( let i = 0 ; i < numberOfNotesArray[ k ] ; i++ ){
+
+						if( k === 0 ){
+	
+							this.tempBuffer.fm( Math.random() * 440 , Math.random() * 440 , Math.random() * 100  ).fill( 0 );
+							this.tempBuffer.ramp( i / numberOfNotesArray[ k ] , ( i + 1 ) / numberOfNotesArray[ k ] , 0.01 , 0.015 , 0.75 , 3 ).multiply( 0 );
+							this.sequenceBuffer.bufferShape( this.tempBuffer.buffer ).add( 0 );
+							
+						}
+							
+						if( k === 1 ){
+	
+							this.tempBuffer.noise().fill( 0 );
+							this.tempBuffer.ramp( i / numberOfNotesArray[ k ] , ( i + 1 ) / numberOfNotesArray[ k ] , 0.01 , 0.015 , 0.1 , 128 ).multiply( 0 );
+							this.sequenceBuffer.bufferShape( this.tempBuffer.buffer ).add( 0 );
+
+						}
+	
+						if( k === 2 ){
+	
+							this.tempBuffer.sine( 400 , 1 ).fill( 0 );
+							this.tempBuffer.ramp( i / numberOfNotesArray[ k ] , ( i + 1 ) / numberOfNotesArray[ k ] , 0.01 , 0.015 , 0.75 , 3 ).multiply( 0 );
+							this.sequenceBuffer.bufferShape( this.tempBuffer.buffer ).add( 0 );
+
+						}
+	
+					}
+
+				}
+		
+		// GENERATORS
+
+			// sequence generator
+
+				this.sequenceGenerator = new AudioGenerator( this.listener );
+				this.sequenceGenerator.buffer = this.sequenceBuffer.buffer;
+				this.sequenceGenerator.playbackRate = 0.6 ;
+				this.sequenceGenerator.loop = true;
+
+		// CONNECTIONS
+
+			this.sequenceGenerator.connect( this.output );
+			
+			this.output.connect( this.listener.getInput() );
+
+	}
+
+	start() {
+
+		const now = this.context.currentTime;
+		const phraseLength = this.sequenceGenerator.buffer.duration / this.sequenceGenerator.playbackRate;
+
+		this.sequenceGenerator.start( now + 0 );
+		this.sequenceGenerator.stop( now + phraseLength * 4 );
+
+	}
+
+}
+
 export { SynthPresets };
