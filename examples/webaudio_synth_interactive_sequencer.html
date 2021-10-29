@@ -68,13 +68,11 @@
 				scene.add( mesh1 );
 
 				const sound1 = new THREE.PositionalAudio( listener );
-				const oscillator = listener.context.createOscillator();
-				oscillator.type = 'sine';
-				oscillator.frequency.setValueAtTime( 144, sound1.context.currentTime );
-				oscillator.start( 0 );
-				sound1.setNodeSource( oscillator );
-				sound1.setRefDistance( 20 );
-				sound1.setVolume( 0.5 );
+				// AUDIO
+
+				const synthPreset = new SynthPresets( listener );
+            	synthPreset.p19_polyphonicSequenceBuffer();
+            	synthPreset.start();
 				mesh1.add( sound1 );
 
 				// analysers
