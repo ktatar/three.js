@@ -71,8 +71,9 @@
 				const sound1 = new THREE.PositionalAudio( listener );
 				const synthPreset = new SynthPresets( listener );
             	synthPreset.p19_polyphonicSequenceBuffer();
-            	synthPreset.start()
-				sound1.setNodeSource( synthPreset );
+            	synthPreset.start();
+				console.log( synthPreset.preset.output );
+				sound1.setNodeSource( synthPreset.preset.output );
 				sound1.setRefDistance( 20 );
 				sound1.setVolume( 0.5 );
 				mesh1.add( sound1 );

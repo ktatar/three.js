@@ -1532,7 +1532,7 @@ class Preset19_PolyphonicSequenceBuffer{
 			this.delayLeft.connect( this.output );
 			this.delayRight.connect( this.output );
 			
-			this.output.connect( this.listener.getInput() );
+			// this.output.connect( this.listener.getInput() );
 
 	}
 
