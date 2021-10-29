@@ -1542,7 +1542,7 @@ class Preset19_PolyphonicSequenceBuffer{
 		const phraseLength = this.sequenceGenerator.buffer.duration / this.sequenceGenerator.playbackRate;
 
 		this.sequenceGenerator.start( now + 0 );
-		this.sequenceGenerator.stop( now + phraseLength * 4 );
+		// this.sequenceGenerator.stop( now + phraseLength * 4 );
 
 	}
 
