@@ -67,12 +67,16 @@
 				mesh1.position.set( 0, 30, - 250 );
 				scene.add( mesh1 );
 
-				const sound1 = new THREE.PositionalAudio( listener );
 				// AUDIO
-
+				const sound1 = new THREE.PositionalAudio( listener );
 				const synthPreset = new SynthPresets( listener );
             	synthPreset.p19_polyphonicSequenceBuffer();
-            	synthPreset.start();
+            	synthPreset.start()
+				sound1.setNodeSource( synthPreset );
+				sound1.setRefDistance( 20 );
+				sound1.setVolume( 0.5 );
+				mesh1.add( sound1 );
+
 				mesh1.add( sound1 );
 
 				// analysers
