@@ -1443,7 +1443,7 @@ class Preset19_PolyphonicSequenceBuffer{
 				this.tempBuffer.createBuffer( 1 , 3 );
 
 				const numberOfVoices = 3;
-				const fundamentalArray = [ 432 * 2 , 432 * 2 , 432 * 4];
+				const fundamentalArray = [ 432 * 2 , 432 * 2 , 432 * 4 ];
 				const numberOfNotesArray = [ 3 , 30 , 15 ];
 				const intervalArray = [ 1 , 9/8 , 5/4 , 4/3 , 5/3 ];
 				const octaveArray = [ 1 , 0.5 , 2 , 0.25 ];
