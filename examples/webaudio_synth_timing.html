@@ -21,6 +21,7 @@
 		import * as THREE from '../build/three.module.js';
 
 		import { OrbitControls } from './jsm/controls/OrbitControls.js';
+		import { AudioBuffer } from './jsm/audio/AudioBuffer.js'; 
 
 		let scene, camera, renderer, clock;
 
@@ -73,10 +74,15 @@
 
 			// audio
 
-			const audioLoader = new THREE.AudioLoader();
+			// const audioLoader = new THREE.AudioLoader();
 
 			const listener = new THREE.AudioListener();
 			camera.add( listener );
+
+			const synthBuffer = new AudioBuffer( listener );
+			synthBuffer.createBuffer( 1 , 0.125 );
+			synthBuffer.sine( 432 * 0.5 , 1 ).fill( 0 );
+			synthBuffer.ramp( 0 , 1 , 0.01 , 0.015 , 0.1 , 8 ).multiply( 0 );
 
 			// floor
 
@@ -113,7 +119,7 @@
 					ball.position.z = radius * Math.sin( s );
 
 					const audio = new THREE.PositionalAudio( listener );
-					audio.setBuffer( buffer );
+					audio.setBuffer( synthBuffer.buffer );
 					ball.add( audio );
 
 					scene.add( ball );

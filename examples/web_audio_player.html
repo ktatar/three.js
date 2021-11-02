@@ -12,7 +12,7 @@
 		<script type="module">
 
 			import * as THREE from '../../build/three.module.js';
-            import { AudioPlayer } from './jsm/audio/AudioPlayer.js'; 
+            import { AudioNodePlayer } from './jsm/audio/AudioNodePlayer.js'; 
             import { AudioGenerator } from './jsm/audio/AudioGenerator.js'; 
             import { AudioBuffer } from './jsm/audio/AudioBuffer.js'; 
             import { AudioSequencer } from './jsm/audio/AudioSequencer.js'; 
@@ -25,11 +25,11 @@
 
             const oscBuffer = new AudioBuffer( listener );
             oscBuffer.createBuffer( 1 , 1 );
-            oscBuffer.sine( 1 , 1 ).add();
+            oscBuffer.sine( 1 , 1 ).add( 0 );
 
             const oscBuffer2 = new AudioBuffer( listener );
             oscBuffer2.createBuffer( 1 , 1 );
-            oscBuffer2.sawtooth( 1 ).add();
+            oscBuffer2.sawtooth( 1 ).add( 0 );
 
             const oscGeneratorFund = 432;
             const osc2GeneratorFund = 432;
@@ -37,12 +37,12 @@
             const oscGenerator = new AudioGenerator( listener );
             oscGenerator.playbackRate = oscGeneratorFund;
             oscGenerator.loop = true;
-            oscGenerator.setGain( 0 );
+            oscGenerator.output.gain.value = 0;
 
             const oscGenerator2 = new AudioGenerator( listener );
             oscGenerator2.playbackRate = osc2GeneratorFund;
             oscGenerator2.loop = true;
-            oscGenerator2.setGain( 0 );
+            oscGenerator2.output.gain.value = 0;
 
             const envBuffer = new AudioBuffer( listener );
             envBuffer.createBuffer( 1 , 1 );
@@ -70,7 +70,7 @@
 
             // AUDIO PLAYER
 
-            const myPlayer = new AudioPlayer( listener );
+            const myPlayer = new AudioNodePlayer( listener );
             myPlayer.addNode( envGenerator );
             myPlayer.addNode( envGenerator2 );
 
