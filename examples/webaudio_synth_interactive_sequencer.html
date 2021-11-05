@@ -59,7 +59,8 @@
 
 				const sphere = new THREE.SphereGeometry( 20, 32, 16 );
 
-				material1 = new THREE.MeshPhongMaterial( { color: 0xffaa00, flatShading: true, shininess: 0 } );
+				var hue = new THREE.Color("hsl(0, 100%, 20%)");
+				material1 = new THREE.MeshPhongMaterial( { color: hue, flatShading: true, shininess: 10 } );
 
 				// sound spheres
 
@@ -137,9 +138,11 @@
 				const delta = clock.getDelta();
 
 				controls.update( delta );
-
-				material1.emissive.b = analyser1.getAverageFrequency() / 256;
-
+				
+				var freqtocolor = analyser1.getAverageFrequency() / 256;
+				var color = new THREE.Color(freqtocolor, freqtocolor, freqtocolor);
+				material1.emissive = color;
+				material1.color.r = freqtocolor * 3;
 				renderer.render( scene, camera );
 
 			}
